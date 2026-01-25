@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
 from uuid import uuid4
-from store.validators import validate_file_size
+from store.validators import validate_file_size, validate_model_extension
 
 
 class Category(models.Model):
@@ -28,7 +28,7 @@ class Product(models.Model):
     )
     inventory = models.IntegerField(validators=[MinValueValidator(0)])
     last_update = models.DateTimeField(auto_now=True)
-    collection = models.ForeignKey(
+    category = models.ForeignKey(
         Category, on_delete=models.PROTECT, related_name="products"
     )
 
@@ -39,11 +39,14 @@ class Product(models.Model):
         ordering = ["title"]
 
 
-class ProductImage(models.Model):
+class ProductAsset(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="images"
     )
-    image = models.ImageField(upload_to="store/images", validators=[validate_file_size])
+    # Image
+    image = models.ImageField(upload_to="store/assets/images", validators=[validate_file_size])
+    # 3D Model
+    mesh = models.FileField(upload_to="store/assets/models",validators=[validate_model_extension])
 
 
 class Customer(models.Model):
@@ -127,11 +130,3 @@ class CartItem(models.Model):
     class Meta:
         unique_together = [["cart", "product"]]
 
-
-class Review(models.Model):
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="reviews"
-    )
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    date = models.DateField(auto_now_add=True)

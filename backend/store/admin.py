@@ -18,8 +18,8 @@ class InventoryFilter(admin.SimpleListFilter):
             return queryset.filter(inventory__lt=10)
 
 
-class ProductImageInline(admin.TabularInline):
-    model = models.ProductImage
+class ProductAssetInline(admin.TabularInline):
+    model = models.ProductAsset
     readonly_fields = ["thumbnail"]
 
     def thumbnail(self, instance):
@@ -30,13 +30,13 @@ class ProductImageInline(admin.TabularInline):
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
-    autocomplete_fields = ["collection"]
+    autocomplete_fields = ["category"]
     prepopulated_fields = {"slug": ["title"]}
     actions = ["clear_inventory"]
-    inlines = [ProductImageInline]
+    inlines = [ProductAssetInline]
     list_display = ["title", "unit_price", "inventory_status", "collection_title"]
     list_editable = ["unit_price"]
-    list_filter = ["collection", "last_update", InventoryFilter]
+    list_filter = ["category", "last_update", InventoryFilter]
     list_per_page = 10
     list_select_related = ["collection"]
     search_fields = ["title"]
@@ -64,20 +64,20 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Category)
-class CollectionAdmin(admin.ModelAdmin):
+class CategoryAdmin(admin.ModelAdmin):
     autocomplete_fields = ["featured_product"]
     list_display = ["title", "products_count"]
     search_fields = ["title"]
 
     @admin.display(ordering="products_count")
-    def products_count(self, collection):
+    def products_count(self, category):
         url = (
             reverse("admin:store_product_changelist")
             + "?"
-            + urlencode({"collection__id": str(collection.id)})
+            + urlencode({"collection__id": str(category.id)})
         )
         return format_html(
-            '<a href="{}">{} Products</a>', url, collection.products_count
+            '<a href="{}">{} Products</a>', url, category.products_count
         )
 
     def get_queryset(self, request):

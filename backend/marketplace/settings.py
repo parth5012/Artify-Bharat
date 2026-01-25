@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     # Internal
     "core",
+    "store",
 ]
 
 MIDDLEWARE = [
@@ -130,4 +131,4 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 
-AUTH_USER_MODEL = 'core.User'
+AUTH_USER_MODEL = "core.User"
