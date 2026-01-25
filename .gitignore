@@ -1,14 +1,14 @@
 # Dependencies
-/node_modules
-/.pnp
+*/node_modules
+*/.pnp
 .pnp.js
 
 # Testing
-/coverage
+*//coverage
 
 # Next.js
-/.next/
-/out/
+*/.next/
+*/out/
 
 # Production
 /build
@@ -36,3 +36,12 @@ next-env.d.ts
 # Python
 __pycache__/
 */__pycache__/
+*/.python-version
+
+
+# Virtual Environment
+*/.venv/
+
+# Database 
+*/db.sqlite3
+*/.DS_Store

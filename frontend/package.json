@@ -29,5 +29,8 @@
     "indian-crafts"
   ],
   "author": "Artify Bharat Team",
-  "license": "MIT"
+  "license": "MIT",
+  "overrides": {
+  "glob": "^10.5.0"
+}
 }
