@@ -40,12 +40,14 @@ INSTALLED_APPS = [
     # External
     "rest_framework",
     "debug_toolbar",
+    "corsheaders",
     # Internal
     "core",
     "store",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -132,3 +134,8 @@ STATIC_URL = "static/"
 
 
 AUTH_USER_MODEL = "core.User"
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Example for a React dev server
+]
