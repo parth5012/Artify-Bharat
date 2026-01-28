@@ -68,14 +68,14 @@ export default function Header() {
                 href="/artisan/onboard"
                 className="px-5 py-2.5 text-sm font-medium text-[#c2794d] hover:text-[#8b6f47] rounded-lg hover:bg-earth-200/60 transition-all duration-200 border border-earth-300/50 bg-white/80"
               >
-                Join as Artisan
+                login
               </Link>
               <Link
-                href="/admin/review-queue"
+                href="/signup/signup"
                 className="px-6 py-2.5 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 flex items-center space-x-2"
               >
-                <span>👑</span>
-                <span>Admin</span>
+                <span></span>
+                <span>Signup</span>
               </Link>
             </div>
 
