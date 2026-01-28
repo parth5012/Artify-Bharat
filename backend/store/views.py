@@ -223,6 +223,9 @@ class LogoutView(APIView):
         logout(request=request)
         return Response("User logged out")
 
+class SignupView(APIView):
+    def post(self,request):
+        pass
 
 @api_view
 def get_dashboard_stats(request):
