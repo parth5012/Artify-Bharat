@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from utils.transcription import get_transcription
+from utils.story_generation import generate_story
 
 
 app = FastAPI()
@@ -18,6 +20,10 @@ app.add_middleware(
 )
 
 
-@app.get("/story")
-async def create_story():
-    return
+@app.get("/story/{product:str}")
+async def create_story(product):
+    return generate_story(product)
+
+@app.get('/transcribe')
+async def transcribe():
+    return get_transcription

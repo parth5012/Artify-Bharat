@@ -65,6 +65,7 @@ class Artisan(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     experience = models.IntegerField()
     speciality = models.CharField(max_length=255)
+    bio = models.TextField(null=True,blank=True)
     # orders
 
 
@@ -78,12 +79,12 @@ class Customer(models.Model):
         (MEMBERSHIP_SILVER, "Silver"),
         (MEMBERSHIP_GOLD, "Gold"),
     ]
-    phone = models.CharField(max_length=255)
     birth_date = models.DateField(null=True, blank=True)
     membership = models.CharField(
         max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE
     )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    interests = models.JSONField(default=list,blank=True)
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
@@ -135,9 +136,11 @@ class OrderItem(models.Model):
 
 
 class Address(models.Model):
-    street = models.CharField(max_length=255)
+    local_address = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    state = models.CharField(max_length=50,null=True)
+    pincode = models.CharField(max_length=10,null=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='address')
 
 
 class Cart(models.Model):

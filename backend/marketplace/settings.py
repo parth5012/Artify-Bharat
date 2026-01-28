@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "corsheaders",
     "django_filters",
+    "phonenumber_field",
     # Internal
     "core",
     "store",
@@ -140,3 +141,6 @@ AUTH_USER_MODEL = "core.User"
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Example for a React dev server
 ]
+
+
+PHONENUMBER_DEFAULT_REGION = 'IN'

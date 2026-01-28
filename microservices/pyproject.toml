@@ -5,8 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "assemblyai>=0.48.4",
     "fastapi>=0.128.0",
     "langchain>=1.2.7",
     "langchain-google-genai>=4.2.0",
+    "python-dotenv>=1.2.1",
     "werkzeug>=3.1.5",
 ]

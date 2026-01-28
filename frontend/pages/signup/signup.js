@@ -1,6 +1,7 @@
+import { useState } from 'react'
+import Link from 'next/link'
+import { signup } from '@/utils/auth'
 import { useRouter } from "next/router";
-import { useState } from "react";
-import Link from "next/link";
 
 export default function Signup() {
   const router = useRouter();
@@ -49,6 +50,11 @@ export default function Signup() {
 //       if (res.ok) {
 //         alert("Account created successfully!");
 
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log('Form submitted:', { ...formData, role: userRole })
+    // Add your registration logic here
+    signup(formData,userRole);
 //         // ✅ Redirect after signup
 //         if (userRole === "artisan") {
 //           router.push("/artisan/onboard");
@@ -65,14 +71,6 @@ export default function Signup() {
 //   };
 
 //as backend is not ready a temporary handleSubmit function
-
-const handleSubmit = (e) => {
-  e.preventDefault();
-
-  if (userRole === "artisan") {
-    router.push("/artisan/onboard");
-  }
-};
 
 
   const craftOptions = [

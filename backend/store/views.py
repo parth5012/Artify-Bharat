@@ -1,3 +1,5 @@
+import email
+from core.models import User
 from store.permissions import (
     FullDjangoModelPermissions,
     IsAdminOrReadOnly,
@@ -5,6 +7,7 @@ from store.permissions import (
 )
 from store.pagination import DefaultPagination
 from django.db.models.aggregates import Count
+from django.contrib.auth import authenticate, login, logout
 
 # from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -26,6 +29,7 @@ from rest_framework.permissions import (
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework import status
 from .filters import ProductFilter
 from .models import (
@@ -198,6 +202,30 @@ class ProductAssetViewSet(ModelViewSet):
     def get_queryset(self):
         return ProductAsset.objects.filter(product_id=self.kwargs["product_pk"])
 
+
+class LoginView(APIView):
+    def post(self, request):
+        email = request.data.get("email")
+        password = request.data.get("password")
+
+        # Validate credentials
+        user = authenticate(request, username=email, password=password)
+        if user is not None:
+            login(request, user)
+            return Response("User logged in")
+        else:
+            return Response("Invalid credentials!!")
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        # Logout user
+        logout(request=request)
+        return Response("User logged out")
+
+class SignupView(APIView):
+    def post(self,request):
+        pass
 
 @api_view
 def get_dashboard_stats(request):

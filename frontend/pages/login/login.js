@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
+import { login } from '@/utils/auth'
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ export default function Login() {
     e.preventDefault()
     console.log('Login submitted:', formData)
     // Add your authentication logic here
+    login(formData);
   }
 
   return (

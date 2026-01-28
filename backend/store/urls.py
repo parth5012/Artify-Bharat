@@ -23,5 +23,9 @@ urlpatterns = (
     router.urls
     + products_router.urls
     + carts_router.urls
-    + [path("stats/", views.get_dashboard_stats)]
+    + [
+        path("stats/", views.get_dashboard_stats),
+        path("login/", views.LoginView.as_view()),
+        path("logout/", views.LogoutView.as_view()),
+    ]
 )
