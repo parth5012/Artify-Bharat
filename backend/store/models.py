@@ -26,10 +26,18 @@ class Product(models.Model):
     unit_price = models.DecimalField(
         max_digits=6, decimal_places=2, validators=[MinValueValidator(1)]
     )
-    inventory = models.IntegerField(validators=[MinValueValidator(0)])
+    inventory = models.IntegerField(
+        default=1, validators=[MinValueValidator(0)], blank=True, null=True
+    )
     last_update = models.DateTimeField(auto_now=True)
     category = models.ForeignKey(
         Category, on_delete=models.PROTECT, related_name="products"
+    )
+    artisan = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="products",
+        default=1,
     )
 
     def __str__(self) -> str:
@@ -44,9 +52,20 @@ class ProductAsset(models.Model):
         Product, on_delete=models.CASCADE, related_name="images"
     )
     # Image
-    image = models.ImageField(upload_to="store/assets/images", validators=[validate_file_size])
+    image = models.ImageField(
+        upload_to="store/assets/images", validators=[validate_file_size]
+    )
     # 3D Model
-    mesh = models.FileField(upload_to="store/assets/models",validators=[validate_model_extension])
+    mesh = models.FileField(
+        upload_to="store/assets/models", validators=[validate_model_extension]
+    )
+
+
+class Artisan(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    experience = models.IntegerField()
+    speciality = models.CharField(max_length=255)
+    # orders
 
 
 class Customer(models.Model):
@@ -97,6 +116,7 @@ class Order(models.Model):
         max_length=1, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING
     )
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    delivered = models.BooleanField(default=False, null=True, blank=True)
 
     class Meta:
         permissions = [("cancel_order", "Can cancel order")]
@@ -106,6 +126,9 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name="items")
     product = models.ForeignKey(
         Product, on_delete=models.PROTECT, related_name="orderitems"
+    )
+    artisan = models.ForeignKey(
+        Artisan, on_delete=models.CASCADE, related_name="orderitems"
     )
     quantity = models.PositiveSmallIntegerField()
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
@@ -129,4 +152,3 @@ class CartItem(models.Model):
 
     class Meta:
         unique_together = [["cart", "product"]]
-

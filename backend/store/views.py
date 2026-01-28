@@ -5,9 +5,10 @@ from store.permissions import (
 )
 from store.pagination import DefaultPagination
 from django.db.models.aggregates import Count
-from django.shortcuts import get_object_or_404
+
+# from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.decorators import action, permission_classes
+from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.mixins import (
     CreateModelMixin,
@@ -24,6 +25,7 @@ from rest_framework.permissions import (
 )
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.decorators import api_view
 from rest_framework import status
 from .filters import ProductFilter
 from .models import (
@@ -54,7 +56,7 @@ from .serializers import (
 
 
 class ProductViewSet(ModelViewSet):
-    queryset = Product.objects.prefetch_related("images").all()
+    queryset = Product.objects.prefetch_related("images", "artisan", "category").all()
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductFilter
@@ -195,3 +197,17 @@ class ProductAssetViewSet(ModelViewSet):
 
     def get_queryset(self):
         return ProductAsset.objects.filter(product_id=self.kwargs["product_pk"])
+
+
+@api_view
+def get_dashboard_stats(request):
+    res = {}
+    if request.user.is_authenticated and request.user.artisan.exists():
+        print("hi")
+    # Product count
+
+    # Total sales
+
+    # Active orders
+
+    # AI verified

@@ -1,36 +1,52 @@
 import AppLayout from '../../components/AppLayout'
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import Link from 'next/link'
+import { getProductsList } from '@/utils/apiCalls'
+
+
 
 export default function MarketplaceWeb() {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [priceRange, setPriceRange] = useState([0, 5000])
 
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      setLoading(true)
+      const data = await getProductsList()
+      setProducts(data || []) // Fallback to empty array
+      setLoading(false)
+    }
+    loadProducts()
+  }, [])
   const categories = [
-    { id: 'all', name: 'All', icon: '🎨' },
-    { id: 'pottery', name: 'Pottery', icon: '🏺' },
-    { id: 'weaving', name: 'Weaving', icon: '🧵' },
-    { id: 'carving', name: 'Carving', icon: '🗿' },
-    { id: 'jewellery', name: 'Jewellery', icon: '💍' },
-    { id: 'textiles', name: 'Textiles', icon: '🧣' },
+    { id: 'all', title: 'All', icon: '🎨' },
+    { id: 'pottery', title: 'Pottery', icon: '🏺' },
+    { id: 'weaving', title: 'Weaving', icon: '🧵' },
+    { id: 'carving', title: 'Carving', icon: '🗿' },
+    { id: 'jewellery', title: 'Jewellery', icon: '💍' },
+    { id: 'textiles', title: 'Textiles', icon: '🧣' },
   ]
   
-  const products = [
-    { id: 1, name: 'किसान पात्र', artisan: 'Kisan Patel', location: 'Gujarat, India', price: 720, rating: 4.5, image: '🏺', category: 'pottery' },
-    { id: 2, name: 'Hand Woven Basket', artisan: 'Sunita Devi', location: 'Rajasthan', price: 540, rating: 5.0, image: '🧺', category: 'weaving' },
-    { id: 3, name: 'Clay Diya Set', artisan: 'Ramesh Kumar', location: 'UP', price: 340, rating: 4.8, image: '🪔', category: 'pottery' },
-    { id: 4, name: 'Wooden Carving', artisan: 'Amit Singh', location: 'MP', price: 890, rating: 4.7, image: '🗿', category: 'carving' },
-    { id: 5, name: 'Silver Necklace', artisan: 'Priya Sharma', location: 'Jaipur', price: 1240, rating: 4.9, image: '📿', category: 'jewellery' },
-    { id: 6, name: 'Handloom Saree', artisan: 'Lakshmi Bai', location: 'TN', price: 2100, rating: 5.0, image: '🧣', category: 'textiles' },
-    { id: 7, name: 'Brass Lamp', artisan: 'Suresh Rao', location: 'Karnataka', price: 670, rating: 4.6, image: '🪔', category: 'carving' },
-    { id: 8, name: 'Embroidered Cushion', artisan: 'Meera Das', location: 'Kashmir', price: 450, rating: 4.8, image: '🎨', category: 'textiles' },
-  ]
+  // const products = [
+  //   { id: 1, title: 'किसान पात्र', artisan: 'Kisan Patel', location: 'Gujarat, India', price: 720, rating: 4.5, image: '🏺', category: 'pottery' },
+  //   { id: 2, title: 'Hand Woven Basket', artisan: 'Sunita Devi', location: 'Rajasthan', price: 540, rating: 5.0, image: '🧺', category: 'weaving' },
+  //   { id: 3, title: 'Clay Diya Set', artisan: 'Ramesh Kumar', location: 'UP', price: 340, rating: 4.8, image: '🪔', category: 'pottery' },
+  //   { id: 4, title: 'Wooden Carving', artisan: 'Amit Singh', location: 'MP', price: 890, rating: 4.7, image: '🗿', category: 'carving' },
+  //   { id: 5, title: 'Silver Necklace', artisan: 'Priya Sharma', location: 'Jaipur', price: 1240, rating: 4.9, image: '📿', category: 'jewellery' },
+  //   { id: 6, title: 'Handloom Saree', artisan: 'Lakshmi Bai', location: 'TN', price: 2100, rating: 5.0, image: '🧣', category: 'textiles' },
+  // ]
+  // const products = getProductsList();
+  // console.log(products);
+
 
   const filteredProducts = products.filter(p => 
     (selectedCategory === 'all' || p.category === selectedCategory) &&
     p.price >= priceRange[0] && p.price <= priceRange[1]
   )
-
+  // console.log("Current Products in State:", products);
   return (
     <AppLayout currentPage="marketplace">
       <div className="min-h-screen p-4 md:p-8">
@@ -54,7 +70,7 @@ export default function MarketplaceWeb() {
                 }`}
               >
                 <span>{cat.icon}</span>
-                <span>{cat.name}</span>
+                <span>{cat.title}</span>
               </button>
             ))}
           </div>
@@ -148,19 +164,19 @@ export default function MarketplaceWeb() {
                     </div>
 
                     <div className="p-5">
-                      <h3 className="text-lg font-bold text-[#3d3021] mb-2 line-clamp-1">{product.name}</h3>
+                      <h3 className="text-lg font-bold text-[#3d3021] mb-2 line-clamp-1">{product.title}</h3>
                       <div className="flex items-center space-x-2 text-sm text-[#6d5a3d] mb-3">
                         <span className="line-clamp-1">{product.artisan}</span>
                         <span>•</span>
-                        <span className="line-clamp-1">{product.location}</span>
+                        {/* <span className="line-clamp-1">{product.location}</span> */}
                       </div>
 
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center space-x-1">
-                          {[...Array(5)].map((_, i) => (
+                          {/* {[...Array(5)].map((_, i) => (
                             <span key={i} className={`text-sm ${i < Math.floor(product.rating) ? 'text-amber-500' : 'text-[#d4c5b0]'}`}>★</span>
-                          ))}
-                          <span className="text-xs text-[#6d5a3d] ml-1">{product.rating}</span>
+                          ))} */}
+                          {/* <span className="text-xs text-[#6d5a3d] ml-1">{product.rating}</span> */}
                         </div>
                         <span className="text-xl font-bold text-[#c2794d]">₹{product.price}</span>
                       </div>

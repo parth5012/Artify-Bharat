@@ -1,6 +1,8 @@
 import AppLayout from '../../components/AppLayout'
 
 export default function ArtisanDashboard() {
+
+  
   const stats = [
     { label: 'Total Products', value: '127', change: '+12', icon: '📦', color: 'from-blue-500 to-blue-600' },
     { label: 'Total Sales', value: '₹45.2K', change: '+18%', icon: '💰', color: 'from-emerald-500 to-emerald-600' },
@@ -12,7 +14,7 @@ export default function ArtisanDashboard() {
     { name: 'Terracotta Vase', views: 234, sales: 12, status: 'active', image: '🏺' },
     { name: 'Clay Diya Set', views: 189, sales: 8, status: 'active', image: '🪔' },
     { name: 'Handloom Basket', views: 156, sales: 6, status: 'pending', image: '🧺' },
-  ]
+  ] 
 
   return (
     <AppLayout currentPage="dashboard">
