@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-export default function ArtisanAuth() {
-  const [isLogin, setIsLogin] = useState(true)
+export default function Signup() {
   const [userRole, setUserRole] = useState('artisan') // 'artisan' or 'buyer'
   const [formData, setFormData] = useState({
     firstName: '',
@@ -29,8 +28,8 @@ export default function ArtisanAuth() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
-    // Add your authentication logic here
+    console.log('Form submitted:', { ...formData, role: userRole })
+    // Add your registration logic here
   }
 
   const craftOptions = [
@@ -210,492 +209,410 @@ export default function ArtisanAuth() {
               </div>
             </div>
 
-            {/* Right Side - Form */}
+            {/* Right Side - Signup Form */}
             <div className="w-full">
               <div className="bg-white rounded-3xl shadow-xl border-2 border-[#c2794d]/10 overflow-hidden">
                 
-                {/* Tab Switcher */}
-                <div className="flex border-b-2 border-[#f5f0e8]">
-                  <button
-                    onClick={() => setIsLogin(true)}
-                    className={`flex-1 py-5 text-center font-semibold transition-all ${
-                      isLogin
-                        ? 'text-[#c2794d] bg-gradient-to-b from-[#faf8f5] to-white border-b-2 border-[#c2794d]'
-                        : 'text-[#6d5a3d]/60 hover:text-[#6d5a3d] hover:bg-[#faf8f5]'
-                    }`}
-                  >
-                    <span className="flex items-center justify-center space-x-2">
-                      <span>🔑</span>
-                      <span>Login</span>
-                    </span>
-                  </button>
-                  
-                  <button
-                    onClick={() => setIsLogin(false)}
-                    className={`flex-1 py-5 text-center font-semibold transition-all ${
-                      !isLogin
-                        ? 'text-[#c2794d] bg-gradient-to-b from-[#faf8f5] to-white border-b-2 border-[#c2794d]'
-                        : 'text-[#6d5a3d]/60 hover:text-[#6d5a3d] hover:bg-[#faf8f5]'
-                    }`}
-                  >
-                    <span className="flex items-center justify-center space-x-2">
-                      <span>✨</span>
-                      <span>Sign Up</span>
-                    </span>
-                  </button>
+                {/* Form Header */}
+                <div className="p-8 lg:p-10 border-b-2 border-[#f5f0e8]">
+                  <div className="text-center">
+                    <div className="inline-block p-3 bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5 rounded-2xl mb-4">
+                      <span className="text-4xl">✨</span>
+                    </div>
+                    <h2 className="text-3xl font-bold text-[#3d3021] mb-2">Create Your Account</h2>
+                    <p className="text-[#6d5a3d]/70">Start your journey with Artify Bharat</p>
+                  </div>
                 </div>
 
                 {/* Form Content */}
                 <div className="p-8 lg:p-10">
                   <form onSubmit={handleSubmit} className="space-y-6">
                     
-                    {/* Login Form */}
-                    {isLogin ? (
-                      <>
-                        <div>
-                          <h2 className="text-3xl font-bold text-[#3d3021] mb-2">Welcome Back!</h2>
-                          <p className="text-[#6d5a3d]/70">Continue your journey</p>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                            Email Address
-                          </label>
-                          <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            placeholder="your@example.com"
-                            className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                            required
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                            Password
-                          </label>
-                          <input
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            placeholder="Enter your password"
-                            className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                            required
-                          />
-                        </div>
-
-                        <div className="flex items-center justify-between text-sm">
-                          <label className="flex items-center space-x-2 cursor-pointer">
-                            <input type="checkbox" className="w-4 h-4 rounded border-[#c2794d] text-[#c2794d] focus:ring-[#c2794d]" />
-                            <span className="text-[#6d5a3d]">Remember me</span>
-                          </label>
-                          <a href="#" className="text-[#c2794d] hover:text-[#8b6f47] font-medium">
-                            Forgot password?
-                          </a>
-                        </div>
-
+                    {/* Role Selection */}
+                    <div>
+                      <label className="block text-sm font-medium text-[#3d3021] mb-3">
+                        I want to join as *
+                      </label>
+                      <div className="grid grid-cols-2 gap-4">
                         <button
-                          type="submit"
-                          className="w-full py-4 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+                          type="button"
+                          onClick={() => setUserRole('artisan')}
+                          className={`p-4 rounded-xl border-2 transition-all ${
+                            userRole === 'artisan'
+                              ? 'border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5'
+                              : 'border-[#e8dcc8] hover:border-[#c2794d]/50'
+                          }`}
                         >
-                          Login to Dashboard
+                          <div className="flex flex-col items-center space-y-2">
+                            <span className="text-3xl">🎨</span>
+                            <span className={`font-semibold ${userRole === 'artisan' ? 'text-[#c2794d]' : 'text-[#6d5a3d]'}`}>
+                              Artisan
+                            </span>
+                            <span className="text-xs text-[#6d5a3d]/70">Sell your creations</span>
+                          </div>
                         </button>
+                        
+                        <button
+                          type="button"
+                          onClick={() => setUserRole('buyer')}
+                          className={`p-4 rounded-xl border-2 transition-all ${
+                            userRole === 'buyer'
+                              ? 'border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5'
+                              : 'border-[#e8dcc8] hover:border-[#c2794d]/50'
+                          }`}
+                        >
+                          <div className="flex flex-col items-center space-y-2">
+                            <span className="text-3xl">🛍️</span>
+                            <span className={`font-semibold ${userRole === 'buyer' ? 'text-[#c2794d]' : 'text-[#6d5a3d]'}`}>
+                              Buyer
+                            </span>
+                            <span className="text-xs text-[#6d5a3d]/70">Discover unique items</span>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Personal Information */}
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                          First Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="firstName"
+                          value={formData.firstName}
+                          onChange={handleInputChange}
+                          placeholder="Rajesh"
+                          className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                          required
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                          Last Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="lastName"
+                          value={formData.lastName}
+                          onChange={handleInputChange}
+                          placeholder="Kumar"
+                          className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        placeholder="your@example.com"
+                        className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                        Phone Number *
+                      </label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        placeholder="+91 98765 43210"
+                        className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                        Password *
+                      </label>
+                      <input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        placeholder="Create a strong password"
+                        className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                        required
+                      />
+                      <p className="mt-1 text-xs text-[#6d5a3d]/70">Minimum 8 characters with letters and numbers</p>
+                    </div>
+
+                    {/* Conditional Fields Based on Role */}
+                    {userRole === 'artisan' ? (
+                      <>
+                        {/* Location Details for Artisan */}
+                        <div className="pt-4 border-t-2 border-[#f5f0e8]">
+                          <h3 className="text-lg font-semibold text-[#3d3021] mb-4">Location Details</h3>
+                          
+                          <div className="space-y-4">
+                            <div>
+                              <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                                Address *
+                              </label>
+                              <input
+                                type="text"
+                                name="address"
+                                value={formData.address}
+                                onChange={handleInputChange}
+                                placeholder="Street address, village name"
+                                className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                                required
+                              />
+                            </div>
+
+                            <div className="grid sm:grid-cols-3 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                                  City *
+                                </label>
+                                <input
+                                  type="text"
+                                  name="city"
+                                  value={formData.city}
+                                  onChange={handleInputChange}
+                                  placeholder="Jaipur"
+                                  className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                                  required
+                                />
+                              </div>
+                              
+                              <div>
+                                <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                                  State *
+                                </label>
+                                <input
+                                  type="text"
+                                  name="state"
+                                  value={formData.state}
+                                  onChange={handleInputChange}
+                                  placeholder="Rajasthan"
+                                  className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                                  required
+                                />
+                              </div>
+                              
+                              <div>
+                                <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                                  Pincode *
+                                </label>
+                                <input
+                                  type="text"
+                                  name="pincode"
+                                  value={formData.pincode}
+                                  onChange={handleInputChange}
+                                  placeholder="302001"
+                                  className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                                  required
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Craft Details for Artisan */}
+                        <div className="pt-4 border-t-2 border-[#f5f0e8]">
+                          <h3 className="text-lg font-semibold text-[#3d3021] mb-4">Your Craft</h3>
+                          
+                          <div className="space-y-4">
+                            <div>
+                              <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                                Craft Specialty *
+                              </label>
+                              <select
+                                name="craftSpecialty"
+                                value={formData.craftSpecialty}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                                required
+                              >
+                                <option value="">Select your main craft</option>
+                                {craftOptions.map((craft) => (
+                                  <option key={craft} value={craft}>{craft}</option>
+                                ))}
+                              </select>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                                Years of Experience *
+                              </label>
+                              <input
+                                type="number"
+                                name="experience"
+                                value={formData.experience}
+                                onChange={handleInputChange}
+                                placeholder="10"
+                                min="0"
+                                className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                                required
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                                Brief Bio
+                              </label>
+                              <textarea
+                                name="bio"
+                                value={formData.bio}
+                                onChange={handleInputChange}
+                                placeholder="Tell us about your craft journey, techniques you specialize in, and what makes your work unique..."
+                                rows="4"
+                                className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5] resize-none"
+                              ></textarea>
+                            </div>
+                          </div>
+                        </div>
                       </>
                     ) : (
                       <>
-                        {/* Signup Form */}
-                        <div>
-                          <h2 className="text-3xl font-bold text-[#3d3021] mb-2">Create Your Account</h2>
-                          <p className="text-[#6d5a3d]/70">Start your journey with Artify Bharat</p>
-                        </div>
-
-                        {/* Role Selection */}
-                        <div>
-                          <label className="block text-sm font-medium text-[#3d3021] mb-3">
-                            I want to join as *
-                          </label>
-                          <div className="grid grid-cols-2 gap-4">
-                            <button
-                              type="button"
-                              onClick={() => setUserRole('artisan')}
-                              className={`p-4 rounded-xl border-2 transition-all ${
-                                userRole === 'artisan'
-                                  ? 'border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5'
-                                  : 'border-[#e8dcc8] hover:border-[#c2794d]/50'
-                              }`}
-                            >
-                              <div className="flex flex-col items-center space-y-2">
-                                <span className="text-3xl">🎨</span>
-                                <span className={`font-semibold ${userRole === 'artisan' ? 'text-[#c2794d]' : 'text-[#6d5a3d]'}`}>
-                                  Artisan
-                                </span>
-                                <span className="text-xs text-[#6d5a3d]/70">Sell your creations</span>
-                              </div>
-                            </button>
-                            
-                            <button
-                              type="button"
-                              onClick={() => setUserRole('buyer')}
-                              className={`p-4 rounded-xl border-2 transition-all ${
-                                userRole === 'buyer'
-                                  ? 'border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5'
-                                  : 'border-[#e8dcc8] hover:border-[#c2794d]/50'
-                              }`}
-                            >
-                              <div className="flex flex-col items-center space-y-2">
-                                <span className="text-3xl">🛍️</span>
-                                <span className={`font-semibold ${userRole === 'buyer' ? 'text-[#c2794d]' : 'text-[#6d5a3d]'}`}>
-                                  Buyer
-                                </span>
-                                <span className="text-xs text-[#6d5a3d]/70">Discover unique items</span>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Personal Information */}
-                        <div className="grid sm:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                              First Name *
-                            </label>
-                            <input
-                              type="text"
-                              name="firstName"
-                              value={formData.firstName}
-                              onChange={handleInputChange}
-                              placeholder="Rajesh"
-                              className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                              required
-                            />
-                          </div>
+                        {/* Buyer Specific Fields */}
+                        <div className="pt-4 border-t-2 border-[#f5f0e8]">
+                          <h3 className="text-lg font-semibold text-[#3d3021] mb-4">Delivery Information</h3>
                           
-                          <div>
-                            <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                              Last Name *
-                            </label>
-                            <input
-                              type="text"
-                              name="lastName"
-                              value={formData.lastName}
-                              onChange={handleInputChange}
-                              placeholder="Kumar"
-                              className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                              required
-                            />
+                          <div className="space-y-4">
+                            <div>
+                              <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                                Delivery Address
+                              </label>
+                              <input
+                                type="text"
+                                name="address"
+                                value={formData.address}
+                                onChange={handleInputChange}
+                                placeholder="House/Flat No, Street, Locality"
+                                className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                              />
+                            </div>
+
+                            <div className="grid sm:grid-cols-3 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                                  City
+                                </label>
+                                <input
+                                  type="text"
+                                  name="city"
+                                  value={formData.city}
+                                  onChange={handleInputChange}
+                                  placeholder="Mumbai"
+                                  className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                                />
+                              </div>
+                              
+                              <div>
+                                <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                                  State
+                                </label>
+                                <input
+                                  type="text"
+                                  name="state"
+                                  value={formData.state}
+                                  onChange={handleInputChange}
+                                  placeholder="Maharashtra"
+                                  className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                                />
+                              </div>
+                              
+                              <div>
+                                <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                                  Pincode
+                                </label>
+                                <input
+                                  type="text"
+                                  name="pincode"
+                                  value={formData.pincode}
+                                  onChange={handleInputChange}
+                                  placeholder="400001"
+                                  className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
+                                />
+                              </div>
+                            </div>
                           </div>
                         </div>
 
-                        <div>
-                          <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                            Email Address *
-                          </label>
-                          <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            placeholder="your@example.com"
-                            className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                            required
-                          />
+                        {/* Shopping Interests for Buyer */}
+                        <div className="pt-4 border-t-2 border-[#f5f0e8]">
+                          <h3 className="text-lg font-semibold text-[#3d3021] mb-2">What interests you?</h3>
+                          <p className="text-sm text-[#6d5a3d]/70 mb-4">Select categories you'd like to explore (optional)</p>
+                          
+                          <div className="grid grid-cols-2 gap-3">
+                            {interestOptions.map((interest) => (
+                              <button
+                                key={interest}
+                                type="button"
+                                onClick={() => handleInterestToggle(interest)}
+                                className={`px-4 py-3 rounded-xl border-2 transition-all text-sm font-medium ${
+                                  formData.interests.includes(interest)
+                                    ? 'border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5 text-[#c2794d]'
+                                    : 'border-[#e8dcc8] hover:border-[#c2794d]/50 text-[#6d5a3d]'
+                                }`}
+                              >
+                                {interest}
+                              </button>
+                            ))}
+                          </div>
                         </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                            Phone Number *
-                          </label>
-                          <input
-                            type="tel"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                            placeholder="+91 98765 43210"
-                            className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                            required
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                            Password *
-                          </label>
-                          <input
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            placeholder="Create a strong password"
-                            className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                            required
-                          />
-                        </div>
-
-                        {/* Conditional Fields Based on Role */}
-                        {userRole === 'artisan' ? (
-                          <>
-                            {/* Location Details for Artisan */}
-                            <div className="pt-4 border-t-2 border-[#f5f0e8]">
-                              <h3 className="text-lg font-semibold text-[#3d3021] mb-4">Location Details</h3>
-                              
-                              <div className="space-y-4">
-                                <div>
-                                  <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                                    Address *
-                                  </label>
-                                  <input
-                                    type="text"
-                                    name="address"
-                                    value={formData.address}
-                                    onChange={handleInputChange}
-                                    placeholder="Street address, village name"
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                                    required
-                                  />
-                                </div>
-
-                                <div className="grid sm:grid-cols-3 gap-4">
-                                  <div>
-                                    <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                                      City *
-                                    </label>
-                                    <input
-                                      type="text"
-                                      name="city"
-                                      value={formData.city}
-                                      onChange={handleInputChange}
-                                      placeholder="Jaipur"
-                                      className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                                      required
-                                    />
-                                  </div>
-                                  
-                                  <div>
-                                    <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                                      State *
-                                    </label>
-                                    <input
-                                      type="text"
-                                      name="state"
-                                      value={formData.state}
-                                      onChange={handleInputChange}
-                                      placeholder="Rajasthan"
-                                      className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                                      required
-                                    />
-                                  </div>
-                                  
-                                  <div>
-                                    <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                                      Pincode *
-                                    </label>
-                                    <input
-                                      type="text"
-                                      name="pincode"
-                                      value={formData.pincode}
-                                      onChange={handleInputChange}
-                                      placeholder="302001"
-                                      className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                                      required
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Craft Details for Artisan */}
-                            <div className="pt-4 border-t-2 border-[#f5f0e8]">
-                              <h3 className="text-lg font-semibold text-[#3d3021] mb-4">Your Craft</h3>
-                              
-                              <div className="space-y-4">
-                                <div>
-                                  <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                                    Craft Specialty *
-                                  </label>
-                                  <select
-                                    name="craftSpecialty"
-                                    value={formData.craftSpecialty}
-                                    onChange={handleInputChange}
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                                    required
-                                  >
-                                    <option value="">Select your main craft</option>
-                                    {craftOptions.map((craft) => (
-                                      <option key={craft} value={craft}>{craft}</option>
-                                    ))}
-                                  </select>
-                                </div>
-
-                                <div>
-                                  <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                                    Years of Experience *
-                                  </label>
-                                  <input
-                                    type="number"
-                                    name="experience"
-                                    value={formData.experience}
-                                    onChange={handleInputChange}
-                                    placeholder="10"
-                                    min="0"
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                                    required
-                                  />
-                                </div>
-
-                                <div>
-                                  <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                                    Brief Bio
-                                  </label>
-                                  <textarea
-                                    name="bio"
-                                    value={formData.bio}
-                                    onChange={handleInputChange}
-                                    placeholder="Tell us about your craft journey, techniques you specialize in, and what makes your work unique..."
-                                    rows="4"
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5] resize-none"
-                                  ></textarea>
-                                </div>
-                              </div>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            {/* Buyer Specific Fields */}
-                            <div className="pt-4 border-t-2 border-[#f5f0e8]">
-                              <h3 className="text-lg font-semibold text-[#3d3021] mb-4">Delivery Information</h3>
-                              
-                              <div className="space-y-4">
-                                <div>
-                                  <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                                    Delivery Address
-                                  </label>
-                                  <input
-                                    type="text"
-                                    name="address"
-                                    value={formData.address}
-                                    onChange={handleInputChange}
-                                    placeholder="House/Flat No, Street, Locality"
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                                  />
-                                </div>
-
-                                <div className="grid sm:grid-cols-3 gap-4">
-                                  <div>
-                                    <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                                      City
-                                    </label>
-                                    <input
-                                      type="text"
-                                      name="city"
-                                      value={formData.city}
-                                      onChange={handleInputChange}
-                                      placeholder="Mumbai"
-                                      className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                                    />
-                                  </div>
-                                  
-                                  <div>
-                                    <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                                      State
-                                    </label>
-                                    <input
-                                      type="text"
-                                      name="state"
-                                      value={formData.state}
-                                      onChange={handleInputChange}
-                                      placeholder="Maharashtra"
-                                      className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                                    />
-                                  </div>
-                                  
-                                  <div>
-                                    <label className="block text-sm font-medium text-[#3d3021] mb-2">
-                                      Pincode
-                                    </label>
-                                    <input
-                                      type="text"
-                                      name="pincode"
-                                      value={formData.pincode}
-                                      onChange={handleInputChange}
-                                      placeholder="400001"
-                                      className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Shopping Interests for Buyer */}
-                            <div className="pt-4 border-t-2 border-[#f5f0e8]">
-                              <h3 className="text-lg font-semibold text-[#3d3021] mb-2">What interests you?</h3>
-                              <p className="text-sm text-[#6d5a3d]/70 mb-4">Select categories you'd like to explore (optional)</p>
-                              
-                              <div className="grid grid-cols-2 gap-3">
-                                {interestOptions.map((interest) => (
-                                  <button
-                                    key={interest}
-                                    type="button"
-                                    onClick={() => handleInterestToggle(interest)}
-                                    className={`px-4 py-3 rounded-xl border-2 transition-all text-sm font-medium ${
-                                      formData.interests.includes(interest)
-                                        ? 'border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5 text-[#c2794d]'
-                                        : 'border-[#e8dcc8] hover:border-[#c2794d]/50 text-[#6d5a3d]'
-                                    }`}
-                                  >
-                                    {interest}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          </>
-                        )}
-
-                        {/* Terms */}
-                        <div className="flex items-start space-x-3">
-                          <input
-                            type="checkbox"
-                            id="terms"
-                            className="w-5 h-5 rounded border-[#c2794d] text-[#c2794d] focus:ring-[#c2794d] mt-0.5"
-                            required
-                          />
-                          <label htmlFor="terms" className="text-sm text-[#6d5a3d]">
-                            I agree to the{' '}
-                            <a href="#" className="text-[#c2794d] hover:text-[#8b6f47] font-medium">
-                              Terms of Service
-                            </a>{' '}
-                            and{' '}
-                            <a href="#" className="text-[#c2794d] hover:text-[#8b6f47] font-medium">
-                              Privacy Policy
-                            </a>
-                          </label>
-                        </div>
-
-                        <button
-                          type="submit"
-                          className="w-full py-4 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
-                        >
-                          {userRole === 'artisan' ? 'Create Artisan Account' : 'Create Buyer Account'}
-                        </button>
                       </>
                     )}
+
+                    {/* Terms */}
+                    <div className="flex items-start space-x-3 pt-4">
+                      <input
+                        type="checkbox"
+                        id="terms"
+                        className="w-5 h-5 rounded border-[#c2794d] text-[#c2794d] focus:ring-[#c2794d] mt-0.5"
+                        required
+                      />
+                      <label htmlFor="terms" className="text-sm text-[#6d5a3d]">
+                        I agree to the{' '}
+                        <a href="#" className="text-[#c2794d] hover:text-[#8b6f47] font-medium">
+                          Terms of Service
+                        </a>{' '}
+                        and{' '}
+                        <a href="#" className="text-[#c2794d] hover:text-[#8b6f47] font-medium">
+                          Privacy Policy
+                        </a>
+                      </label>
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="w-full py-4 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+                    >
+                      {userRole === 'artisan' ? 'Create Artisan Account' : 'Create Buyer Account'}
+                    </button>
                   </form>
                 </div>
-              </div>
 
-              {/* Additional Info */}
-              <div className="mt-6 text-center">
-                <p className="text-sm text-[#6d5a3d]">
-                  {isLogin ? "Don't have an account? " : "Already have an account? "}
-                  <button
-                    onClick={() => setIsLogin(!isLogin)}
-                    className="text-[#c2794d] hover:text-[#8b6f47] font-semibold"
-                  >
-                    {isLogin ? 'Sign up now' : 'Login here'}
-                  </button>
-                </p>
+                {/* Footer */}
+                <div className="px-8 lg:px-10 pb-8">
+                  <div className="text-center text-sm">
+                    <p className="text-[#6d5a3d]">
+                      Already have an account?{' '}
+                      <Link
+                        href="/login/login"
+                        className="text-[#c2794d] hover:text-[#8b6f47] font-semibold"
+                      >
+                        Login here
+                      </Link>
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

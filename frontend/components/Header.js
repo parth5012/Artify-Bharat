@@ -65,7 +65,7 @@ export default function Header() {
             {/* CTA Buttons */}
             <div className="hidden lg:flex items-center space-x-3">
               <Link
-                href="/artisan/onboard"
+                href="/login/login"
                 className="px-5 py-2.5 text-sm font-medium text-[#c2794d] hover:text-[#8b6f47] rounded-lg hover:bg-earth-200/60 transition-all duration-200 border border-earth-300/50 bg-white/80"
               >
                 login
