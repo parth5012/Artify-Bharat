@@ -1,75 +1,118 @@
-import { useState } from 'react'
-import Link from 'next/link'
+import { useRouter } from "next/router";
+import { useState } from "react";
+import Link from "next/link";
 
 export default function Signup() {
-  const [userRole, setUserRole] = useState('artisan') // 'artisan' or 'buyer'
+  const router = useRouter();
+  const [userRole, setUserRole] = useState("artisan"); // 'artisan' or 'buyer'
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    pincode: '',
-    craftSpecialty: '',
-    experience: '',
-    bio: '',
-    interests: []
-  })
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+    craftSpecialty: "",
+    experience: "",
+    bio: "",
+    interests: [],
+  });
 
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('Form submitted:', { ...formData, role: userRole })
-    // Add your registration logic here
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     try {
+//       // ✅ Send data to backend API
+//       const res = await fetch("http://localhost:5000/api/signup", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//           ...formData,
+//           role: userRole,
+//         }),
+//       });
+
+//       const data = await res.json();
+
+//       if (res.ok) {
+//         alert("Account created successfully!");
+
+//         // ✅ Redirect after signup
+//         if (userRole === "artisan") {
+//           router.push("/artisan/onboard");
+//         } else {
+//           router.push("/buyer/dashboard");
+//         }
+//       } else {
+//         alert(data.message || "Signup failed");
+//       }
+//     } catch (error) {
+//       console.log("Signup Error:", error);
+//       alert("Something went wrong!");
+//     }
+//   };
+
+//as backend is not ready a temporary handleSubmit function
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+
+  if (userRole === "artisan") {
+    router.push("/artisan/onboard");
   }
+};
+
 
   const craftOptions = [
-    'Pottery & Ceramics',
-    'Textile & Weaving',
-    'Wood Carving',
-    'Metal Craft',
-    'Jewelry Making',
-    'Painting & Art',
-    'Leather Craft',
-    'Stone Carving',
-    'Bamboo Craft',
-    'Other'
-  ]
+    "Pottery & Ceramics",
+    "Textile & Weaving",
+    "Wood Carving",
+    "Metal Craft",
+    "Jewelry Making",
+    "Painting & Art",
+    "Leather Craft",
+    "Stone Carving",
+    "Bamboo Craft",
+    "Other",
+  ];
 
   const interestOptions = [
-    'Home Decor',
-    'Fashion & Accessories',
-    'Jewelry',
-    'Art & Paintings',
-    'Traditional Crafts',
-    'Gifts & Occasions',
-    'Furniture',
-    'Textiles'
-  ]
+    "Home Decor",
+    "Fashion & Accessories",
+    "Jewelry",
+    "Art & Paintings",
+    "Traditional Crafts",
+    "Gifts & Occasions",
+    "Furniture",
+    "Textiles",
+  ];
 
   const handleInterestToggle = (interest) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       interests: prev.interests.includes(interest)
-        ? prev.interests.filter(i => i !== interest)
-        : [...prev.interests, interest]
-    }))
-  }
+        ? prev.interests.filter((i) => i !== interest)
+        : [...prev.interests, interest],
+    }));
+  };
 
   return (
     <>
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#8b6f47] via-[#c2794d] to-[#8b6f47] z-50"></div>
-      
+
       <header className="fixed top-1 left-0 right-0 z-50 bg-[#f8f6f3]/98 backdrop-blur-md border-b-2 border-[#c2794d]/20">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
@@ -78,12 +121,16 @@ export default function Signup() {
                 <span className="text-white font-bold text-xl">अ</span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-[#3d3021]">Artify Bharat</h1>
-                <p className="text-xs text-[#8b6f47] hidden sm:block">कारीगरों का बाज़ार</p>
+                <h1 className="text-2xl font-bold text-[#3d3021]">
+                  Artify Bharat
+                </h1>
+                <p className="text-xs text-[#8b6f47] hidden sm:block">
+                  कारीगरों का बाज़ार
+                </p>
               </div>
             </Link>
-            
-            <Link 
+
+            <Link
               href="/"
               className="text-sm text-[#6d5a3d] hover:text-[#c2794d] transition-colors flex items-center space-x-2"
             >
@@ -98,58 +145,74 @@ export default function Signup() {
       <div className="min-h-screen bg-gradient-to-br from-[#f8f6f3] via-[#faf8f5] to-[#f5f0e8] pt-24 pb-12 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 items-start">
-            
             {/* Left Side - Decorative */}
             <div className="hidden lg:block sticky top-28">
               <div className="relative">
                 {/* Decorative Elements */}
                 <div className="absolute -top-4 -left-4 w-24 h-24 bg-[#c2794d]/10 rounded-full blur-2xl"></div>
                 <div className="absolute bottom-12 right-8 w-32 h-32 bg-[#8b6f47]/10 rounded-full blur-3xl"></div>
-                
+
                 <div className="relative bg-gradient-to-br from-[#c2794d] to-[#8b6f47] rounded-3xl p-12 shadow-2xl">
                   <div className="space-y-6 text-white">
                     <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm">
                       ✨ AI-Powered Platform
                     </div>
-                    
-                    {userRole === 'artisan' ? (
+
+                    {userRole === "artisan" ? (
                       <>
                         <h2 className="text-4xl font-bold leading-tight">
-                          Join the Future of<br />Handmade
+                          Join the Future of
+                          <br />
+                          Handmade
                         </h2>
-                        
+
                         <p className="text-white/90 text-lg leading-relaxed">
-                          Connect with customers worldwide, powered by AI that understands your craft and amplifies your artisan story.
+                          Connect with customers worldwide, powered by AI that
+                          understands your craft and amplifies your artisan
+                          story.
                         </p>
-                        
+
                         <div className="space-y-4 pt-4">
                           <div className="flex items-start space-x-3">
                             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
                               <span>🎯</span>
                             </div>
                             <div>
-                              <h3 className="font-semibold mb-1">Verified Artisan Badge</h3>
-                              <p className="text-white/80 text-sm">Get recognized with our authenticity certification</p>
+                              <h3 className="font-semibold mb-1">
+                                Verified Artisan Badge
+                              </h3>
+                              <p className="text-white/80 text-sm">
+                                Get recognized with our authenticity
+                                certification
+                              </p>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-start space-x-3">
                             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
                               <span>🌍</span>
                             </div>
                             <div>
-                              <h3 className="font-semibold mb-1">Global Marketplace</h3>
-                              <p className="text-white/80 text-sm">Reach 10M+ customers across India and beyond</p>
+                              <h3 className="font-semibold mb-1">
+                                Global Marketplace
+                              </h3>
+                              <p className="text-white/80 text-sm">
+                                Reach 10M+ customers across India and beyond
+                              </p>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-start space-x-3">
                             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
                               <span>🤖</span>
                             </div>
                             <div>
-                              <h3 className="font-semibold mb-1">AI Story Generation</h3>
-                              <p className="text-white/80 text-sm">Let AI help tell your craft's unique story</p>
+                              <h3 className="font-semibold mb-1">
+                                AI Story Generation
+                              </h3>
+                              <p className="text-white/80 text-sm">
+                                Let AI help tell your craft's unique story
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -157,51 +220,69 @@ export default function Signup() {
                     ) : (
                       <>
                         <h2 className="text-4xl font-bold leading-tight">
-                          Discover Authentic<br />Handmade Treasures
+                          Discover Authentic
+                          <br />
+                          Handmade Treasures
                         </h2>
-                        
+
                         <p className="text-white/90 text-lg leading-relaxed">
-                          Shop directly from verified Indian artisans. Every purchase preserves tradition and supports livelihoods.
+                          Shop directly from verified Indian artisans. Every
+                          purchase preserves tradition and supports livelihoods.
                         </p>
-                        
+
                         <div className="space-y-4 pt-4">
                           <div className="flex items-start space-x-3">
                             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
                               <span>✅</span>
                             </div>
                             <div>
-                              <h3 className="font-semibold mb-1">100% Authentic Products</h3>
-                              <p className="text-white/80 text-sm">Every item verified by AI and human experts</p>
+                              <h3 className="font-semibold mb-1">
+                                100% Authentic Products
+                              </h3>
+                              <p className="text-white/80 text-sm">
+                                Every item verified by AI and human experts
+                              </p>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-start space-x-3">
                             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
                               <span>📜</span>
                             </div>
                             <div>
-                              <h3 className="font-semibold mb-1">Digital Passport</h3>
-                              <p className="text-white/80 text-sm">Know the story behind every handmade piece</p>
+                              <h3 className="font-semibold mb-1">
+                                Digital Passport
+                              </h3>
+                              <p className="text-white/80 text-sm">
+                                Know the story behind every handmade piece
+                              </p>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-start space-x-3">
                             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
                               <span>💝</span>
                             </div>
                             <div>
-                              <h3 className="font-semibold mb-1">Support Artisans</h3>
-                              <p className="text-white/80 text-sm">Your purchase directly impacts artisan families</p>
+                              <h3 className="font-semibold mb-1">
+                                Support Artisans
+                              </h3>
+                              <p className="text-white/80 text-sm">
+                                Your purchase directly impacts artisan families
+                              </p>
                             </div>
                           </div>
                         </div>
                       </>
                     )}
-                    
+
                     {/* Decorative Pattern */}
                     <div className="pt-8 flex space-x-2 opacity-30">
                       {[...Array(8)].map((_, i) => (
-                        <div key={i} className="w-2 h-2 bg-white rounded-full"></div>
+                        <div
+                          key={i}
+                          className="w-2 h-2 bg-white rounded-full"
+                        ></div>
                       ))}
                     </div>
                   </div>
@@ -212,22 +293,24 @@ export default function Signup() {
             {/* Right Side - Signup Form */}
             <div className="w-full">
               <div className="bg-white rounded-3xl shadow-xl border-2 border-[#c2794d]/10 overflow-hidden">
-                
                 {/* Form Header */}
                 <div className="p-8 lg:p-10 border-b-2 border-[#f5f0e8]">
                   <div className="text-center">
                     <div className="inline-block p-3 bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5 rounded-2xl mb-4">
                       <span className="text-4xl">✨</span>
                     </div>
-                    <h2 className="text-3xl font-bold text-[#3d3021] mb-2">Create Your Account</h2>
-                    <p className="text-[#6d5a3d]/70">Start your journey with Artify Bharat</p>
+                    <h2 className="text-3xl font-bold text-[#3d3021] mb-2">
+                      Create Your Account
+                    </h2>
+                    <p className="text-[#6d5a3d]/70">
+                      Start your journey with Artify Bharat
+                    </p>
                   </div>
                 </div>
 
                 {/* Form Content */}
                 <div className="p-8 lg:p-10">
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    
                     {/* Role Selection */}
                     <div>
                       <label className="block text-sm font-medium text-[#3d3021] mb-3">
@@ -236,37 +319,45 @@ export default function Signup() {
                       <div className="grid grid-cols-2 gap-4">
                         <button
                           type="button"
-                          onClick={() => setUserRole('artisan')}
+                          onClick={() => setUserRole("artisan")}
                           className={`p-4 rounded-xl border-2 transition-all ${
-                            userRole === 'artisan'
-                              ? 'border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5'
-                              : 'border-[#e8dcc8] hover:border-[#c2794d]/50'
+                            userRole === "artisan"
+                              ? "border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5"
+                              : "border-[#e8dcc8] hover:border-[#c2794d]/50"
                           }`}
                         >
                           <div className="flex flex-col items-center space-y-2">
                             <span className="text-3xl">🎨</span>
-                            <span className={`font-semibold ${userRole === 'artisan' ? 'text-[#c2794d]' : 'text-[#6d5a3d]'}`}>
+                            <span
+                              className={`font-semibold ${userRole === "artisan" ? "text-[#c2794d]" : "text-[#6d5a3d]"}`}
+                            >
                               Artisan
                             </span>
-                            <span className="text-xs text-[#6d5a3d]/70">Sell your creations</span>
+                            <span className="text-xs text-[#6d5a3d]/70">
+                              Sell your creations
+                            </span>
                           </div>
                         </button>
-                        
+
                         <button
                           type="button"
-                          onClick={() => setUserRole('buyer')}
+                          onClick={() => setUserRole("buyer")}
                           className={`p-4 rounded-xl border-2 transition-all ${
-                            userRole === 'buyer'
-                              ? 'border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5'
-                              : 'border-[#e8dcc8] hover:border-[#c2794d]/50'
+                            userRole === "buyer"
+                              ? "border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5"
+                              : "border-[#e8dcc8] hover:border-[#c2794d]/50"
                           }`}
                         >
                           <div className="flex flex-col items-center space-y-2">
                             <span className="text-3xl">🛍️</span>
-                            <span className={`font-semibold ${userRole === 'buyer' ? 'text-[#c2794d]' : 'text-[#6d5a3d]'}`}>
+                            <span
+                              className={`font-semibold ${userRole === "buyer" ? "text-[#c2794d]" : "text-[#6d5a3d]"}`}
+                            >
                               Buyer
                             </span>
-                            <span className="text-xs text-[#6d5a3d]/70">Discover unique items</span>
+                            <span className="text-xs text-[#6d5a3d]/70">
+                              Discover unique items
+                            </span>
                           </div>
                         </button>
                       </div>
@@ -288,7 +379,7 @@ export default function Signup() {
                           required
                         />
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-[#3d3021] mb-2">
                           Last Name *
@@ -348,16 +439,20 @@ export default function Signup() {
                         className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
                         required
                       />
-                      <p className="mt-1 text-xs text-[#6d5a3d]/70">Minimum 8 characters with letters and numbers</p>
+                      <p className="mt-1 text-xs text-[#6d5a3d]/70">
+                        Minimum 8 characters with letters and numbers
+                      </p>
                     </div>
 
                     {/* Conditional Fields Based on Role */}
-                    {userRole === 'artisan' ? (
+                    {userRole === "artisan" ? (
                       <>
                         {/* Location Details for Artisan */}
                         <div className="pt-4 border-t-2 border-[#f5f0e8]">
-                          <h3 className="text-lg font-semibold text-[#3d3021] mb-4">Location Details</h3>
-                          
+                          <h3 className="text-lg font-semibold text-[#3d3021] mb-4">
+                            Location Details
+                          </h3>
+
                           <div className="space-y-4">
                             <div>
                               <label className="block text-sm font-medium text-[#3d3021] mb-2">
@@ -389,7 +484,7 @@ export default function Signup() {
                                   required
                                 />
                               </div>
-                              
+
                               <div>
                                 <label className="block text-sm font-medium text-[#3d3021] mb-2">
                                   State *
@@ -404,7 +499,7 @@ export default function Signup() {
                                   required
                                 />
                               </div>
-                              
+
                               <div>
                                 <label className="block text-sm font-medium text-[#3d3021] mb-2">
                                   Pincode *
@@ -425,8 +520,10 @@ export default function Signup() {
 
                         {/* Craft Details for Artisan */}
                         <div className="pt-4 border-t-2 border-[#f5f0e8]">
-                          <h3 className="text-lg font-semibold text-[#3d3021] mb-4">Your Craft</h3>
-                          
+                          <h3 className="text-lg font-semibold text-[#3d3021] mb-4">
+                            Your Craft
+                          </h3>
+
                           <div className="space-y-4">
                             <div>
                               <label className="block text-sm font-medium text-[#3d3021] mb-2">
@@ -441,7 +538,9 @@ export default function Signup() {
                               >
                                 <option value="">Select your main craft</option>
                                 {craftOptions.map((craft) => (
-                                  <option key={craft} value={craft}>{craft}</option>
+                                  <option key={craft} value={craft}>
+                                    {craft}
+                                  </option>
                                 ))}
                               </select>
                             </div>
@@ -482,8 +581,10 @@ export default function Signup() {
                       <>
                         {/* Buyer Specific Fields */}
                         <div className="pt-4 border-t-2 border-[#f5f0e8]">
-                          <h3 className="text-lg font-semibold text-[#3d3021] mb-4">Delivery Information</h3>
-                          
+                          <h3 className="text-lg font-semibold text-[#3d3021] mb-4">
+                            Delivery Information
+                          </h3>
+
                           <div className="space-y-4">
                             <div>
                               <label className="block text-sm font-medium text-[#3d3021] mb-2">
@@ -513,7 +614,7 @@ export default function Signup() {
                                   className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
                                 />
                               </div>
-                              
+
                               <div>
                                 <label className="block text-sm font-medium text-[#3d3021] mb-2">
                                   State
@@ -527,7 +628,7 @@ export default function Signup() {
                                   className="w-full px-4 py-3 rounded-xl border-2 border-[#e8dcc8] focus:border-[#c2794d] focus:outline-none transition-colors bg-[#faf8f5]"
                                 />
                               </div>
-                              
+
                               <div>
                                 <label className="block text-sm font-medium text-[#3d3021] mb-2">
                                   Pincode
@@ -547,9 +648,13 @@ export default function Signup() {
 
                         {/* Shopping Interests for Buyer */}
                         <div className="pt-4 border-t-2 border-[#f5f0e8]">
-                          <h3 className="text-lg font-semibold text-[#3d3021] mb-2">What interests you?</h3>
-                          <p className="text-sm text-[#6d5a3d]/70 mb-4">Select categories you'd like to explore (optional)</p>
-                          
+                          <h3 className="text-lg font-semibold text-[#3d3021] mb-2">
+                            What interests you?
+                          </h3>
+                          <p className="text-sm text-[#6d5a3d]/70 mb-4">
+                            Select categories you'd like to explore (optional)
+                          </p>
+
                           <div className="grid grid-cols-2 gap-3">
                             {interestOptions.map((interest) => (
                               <button
@@ -558,8 +663,8 @@ export default function Signup() {
                                 onClick={() => handleInterestToggle(interest)}
                                 className={`px-4 py-3 rounded-xl border-2 transition-all text-sm font-medium ${
                                   formData.interests.includes(interest)
-                                    ? 'border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5 text-[#c2794d]'
-                                    : 'border-[#e8dcc8] hover:border-[#c2794d]/50 text-[#6d5a3d]'
+                                    ? "border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5 text-[#c2794d]"
+                                    : "border-[#e8dcc8] hover:border-[#c2794d]/50 text-[#6d5a3d]"
                                 }`}
                               >
                                 {interest}
@@ -579,12 +684,18 @@ export default function Signup() {
                         required
                       />
                       <label htmlFor="terms" className="text-sm text-[#6d5a3d]">
-                        I agree to the{' '}
-                        <a href="#" className="text-[#c2794d] hover:text-[#8b6f47] font-medium">
+                        I agree to the{" "}
+                        <a
+                          href="#"
+                          className="text-[#c2794d] hover:text-[#8b6f47] font-medium"
+                        >
                           Terms of Service
-                        </a>{' '}
-                        and{' '}
-                        <a href="#" className="text-[#c2794d] hover:text-[#8b6f47] font-medium">
+                        </a>{" "}
+                        and{" "}
+                        <a
+                          href="#"
+                          className="text-[#c2794d] hover:text-[#8b6f47] font-medium"
+                        >
                           Privacy Policy
                         </a>
                       </label>
@@ -594,7 +705,9 @@ export default function Signup() {
                       type="submit"
                       className="w-full py-4 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
                     >
-                      {userRole === 'artisan' ? 'Create Artisan Account' : 'Create Buyer Account'}
+                      {userRole === "artisan"
+                        ? "Create Artisan Account"
+                        : "Create Buyer Account"}
                     </button>
                   </form>
                 </div>
@@ -603,7 +716,7 @@ export default function Signup() {
                 <div className="px-8 lg:px-10 pb-8">
                   <div className="text-center text-sm">
                     <p className="text-[#6d5a3d]">
-                      Already have an account?{' '}
+                      Already have an account?{" "}
                       <Link
                         href="/login/login"
                         className="text-[#c2794d] hover:text-[#8b6f47] font-semibold"
@@ -622,5 +735,5 @@ export default function Signup() {
       {/* Footer Decoration */}
       <div className="h-2 bg-gradient-to-r from-[#8b6f47] via-[#c2794d] to-[#8b6f47]"></div>
     </>
-  )
+  );
 }

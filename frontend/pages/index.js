@@ -117,7 +117,7 @@ export default function Home() {
                 </Link>
 
                 <Link
-                  href="/artisan/onboard"
+                  href="/signup/signup"
                   className="px-10 py-4 bg-white text-[#3d3021] font-semibold rounded-xl border-2 border-earth-400/60 hover:border-[#c2794d] hover:bg-earth-50 transition-all duration-300 flex items-center space-x-2 shadow-soft hover:shadow-warm"
                 >
                   <span className="text-xl">➕</span>
