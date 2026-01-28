@@ -1,5 +1,5 @@
 insert into
-  store_collection (id, title, featured_product_id)
+  store_category (id, title, featured_product_id)
 values
   (1, 'Flowers', null),
   (2, 'Grocery', null),
@@ -20,7 +20,7 @@ insert into
     unit_price,
     inventory,
     last_update,
-    collection_id,
+    category_id,
     slug
   )
 values
