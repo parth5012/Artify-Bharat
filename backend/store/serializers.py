@@ -222,3 +222,18 @@ class CreateUserSerializer(serializers.Serializer):
     state = serializers.CharField()
     pincode = serializers.CharField()
 
+#  Sample Data
+# {
+#     "userRole": "artisan",
+#     "firstName": "Parth",
+#     "lastName": "Chawla",
+#     "email": "parth@domain.com",
+#     "password": "parth1234",
+#     "phone": "+918923641290",
+#     "address": "abc",
+#     "city": "a",
+#     "state": "b",
+#     "pincode": "100000",
+#     "craftSpeciality": "pottery",
+#     "experience": 4
+# }
