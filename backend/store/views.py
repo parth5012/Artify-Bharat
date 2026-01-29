@@ -283,5 +283,10 @@ def get_dashboard_stats(request):
         ).count()
         # AI verified
         stats["ai_verified"] = 98
-        
-        return stats
+        old_stats: DashboardStats = artisan.stats
+        change = DashboardStats()
+        change["active_orders"] = stats["active_orders"] - old_stats["active_orders"]
+        change["ai_verified"] = stats["ai_verified"] - old_stats["ai_verified"]
+        change["products_count"] = stats["products_count"] - old_stats["products_count"]
+        change["total_sales"] = stats["total_sales"] - old_stats["total_sales"]
+        return Response({"stats": stats, "change": change})
