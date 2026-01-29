@@ -1,122 +1,316 @@
-import AppLayout from '../../components/AppLayout'
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+
+/* ================= DASHBOARD ================= */
 
 export default function ArtisanDashboard() {
+  const router = useRouter();
 
-  
+  const [artisanData] = useState({
+    name: "Rajesh Kumar",
+    profileImage: null,
+    city: "Jaipur",
+    state: "Rajasthan",
+    craftStory:
+      "This beautiful handcrafted pottery represents generations of traditional craftsmanship passed down from my grandmother. Each piece is carefully shaped using ancient techniques.",
+    speciality: "Traditional Pottery",
+    experience: 15,
+  });
+
+  const [products, setProducts] = useState([]);
+  const [showAddProduct, setShowAddProduct] = useState(false);
+
   const stats = [
-    { label: 'Total Products', value: '127', change: '+12', icon: '📦', color: 'from-blue-500 to-blue-600' },
-    { label: 'Total Sales', value: '₹45.2K', change: '+18%', icon: '💰', color: 'from-emerald-500 to-emerald-600' },
-    { label: 'Active Orders', value: '24', change: '+3', icon: '🚀', color: 'from-amber-500 to-amber-600' },
-    { label: 'AI Verified', value: '98%', change: '+2%', icon: '✓', color: 'from-[#c2794d] to-[#8b6f47]' },
-  ]
-
-  const recentProducts = [
-    { name: 'Terracotta Vase', views: 234, sales: 12, status: 'active', image: '🏺' },
-    { name: 'Clay Diya Set', views: 189, sales: 8, status: 'active', image: '🪔' },
-    { name: 'Handloom Basket', views: 156, sales: 6, status: 'pending', image: '🧺' },
-  ] 
+    {
+      title: "Total Products",
+      value: "24",
+      icon: "🎨",
+      change: "+3 this week",
+      changeType: "positive",
+      bgGradient: "from-blue-500 to-blue-600",
+    },
+    {
+      title: "Total Sales",
+      value: "₹45,280",
+      icon: "💰",
+      change: "+12% this month",
+      changeType: "positive",
+      bgGradient: "from-emerald-500 to-emerald-600",
+    },
+    {
+      title: "Active Orders",
+      value: "8",
+      icon: "📦",
+      change: "2 pending",
+      changeType: "neutral",
+      bgGradient: "from-orange-500 to-orange-600",
+    },
+    {
+      title: "AI Verified",
+      value: "18",
+      icon: "✓",
+      change: "75% of products",
+      changeType: "positive",
+      bgGradient: "from-purple-500 to-purple-600",
+    },
+  ];
 
   return (
-    <AppLayout currentPage="dashboard">
-      <div className="min-h-screen p-4 md:p-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Welcome Header */}
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-[#3d3021] mb-2 font-display">Welcome back, Kisan! 👋</h2>
-            <p className="text-[#6d5a3d]">Here's what's happening with your artisan store today</p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#f8f6f3] to-[#ede8e0] p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* HEADER */}
+        <div>
+          <h1 className="text-4xl font-bold text-[#3d3021]">
+            Artisan Dashboard
+          </h1>
+          <p className="text-[#6d5a3d]">
+            Welcome back! Manage your profile and products
+          </p>
+        </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
-            {stats.map((stat, i) => (
-              <div key={i} className="bg-white rounded-2xl border-2 border-[#d4c5b0]/50 p-4 md:p-6 shadow-sm hover:shadow-warm transition-all">
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center text-xl md:text-2xl shadow-md`}>
-                    {stat.icon}
-                  </div>
-                  <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                    {stat.change}
-                  </span>
-                </div>
-                <div className="text-2xl md:text-3xl font-bold text-[#3d3021] mb-1 font-display">{stat.value}</div>
-                <div className="text-xs md:text-sm text-[#6d5a3d]">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Recent Products */}
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl border-2 border-[#d4c5b0]/50 p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-[#3d3021] font-display">Recent Products</h3>
-                  <button className="text-sm text-[#c2794d] font-semibold hover:underline">View All</button>
-                </div>
-
-                <div className="space-y-4">
-                  {recentProducts.map((product, i) => (
-                    <div key={i} className="flex items-center justify-between p-4 bg-[#f8f6f3] rounded-xl border border-[#d4c5b0]/30 hover:border-[#c2794d] transition-colors">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center border-2 border-[#d4c5b0]/50 text-2xl">
-                          {product.image}
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-[#3d3021]">{product.name}</h4>
-                          <div className="flex items-center space-x-3 text-xs text-[#6d5a3d] mt-1">
-                            <span>👁️ {product.views} views</span>
-                            <span>•</span>
-                            <span>💰 {product.sales} sales</span>
-                          </div>
-                        </div>
-                      </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        product.status === 'active' 
-                          ? 'bg-emerald-100 text-emerald-800' 
-                          : 'bg-amber-100 text-amber-800'
-                      }`}>
-                        {product.status}
+        {/* MAIN GRID */}
+        <div className="grid lg:grid-cols-12 gap-6">
+          {/* PROFILE */}
+          <div className="lg:col-span-3 space-y-6">
+            <div className="bg-white rounded-2xl border p-6 shadow-sm">
+              <div className="flex justify-center mb-4">
+                <div className="relative group">
+                  {artisanData.profileImage ? (
+                    <img
+                      src={artisanData.profileImage}
+                      alt={artisanData.name}
+                      className="w-24 h-24 rounded-full object-cover border-4 shadow-md"
+                    />
+                  ) : (
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#c2794d] to-[#8b6f47] flex items-center justify-center border-4 shadow-md">
+                      <span className="text-3xl text-white font-bold">
+                        {artisanData.name.charAt(0)}
                       </span>
                     </div>
-                  ))}
+                  )}
+
+                  <button className="absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs">
+                    Upload
+                  </button>
                 </div>
+              </div>
+
+              <div className="text-center">
+                <h2 className="font-bold text-xl">{artisanData.name}</h2>
+                <p className="text-sm text-[#8b6f47]">
+                  {artisanData.speciality}
+                </p>
+
+                <div className="text-xs text-[#6d5a3d] mt-2 space-y-1">
+                  <p>
+                    📍 {artisanData.city}, {artisanData.state}
+                  </p>
+                  <p>⭐ {artisanData.experience} years</p>
+                </div>
+
+                <button className="mt-4 w-full py-2 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white rounded-xl">
+                  Edit Profile
+                </button>
+              </div>
+
+              <div className="mt-4 bg-amber-50 border rounded-xl p-3">
+                <h3 className="text-sm font-bold mb-1">✨ Craft Story</h3>
+                <p className="text-xs text-[#6d5a3d]">
+                  {artisanData.craftStory}
+                </p>
               </div>
             </div>
+          </div>
 
-            {/* Quick Actions */}
-            <div className="lg:col-span-1 space-y-6">
-              <div className="bg-gradient-to-br from-[#c2794d] to-[#8b6f47] rounded-2xl p-6 text-white shadow-lg">
-                <h3 className="text-lg font-bold mb-4 font-display">Quick Actions</h3>
-                <div className="space-y-3">
-                  <button className="w-full py-3 bg-white/20 hover:bg-white/30 rounded-xl font-medium transition-colors text-left px-4">
-                    ➕ Add New Product
-                  </button>
-                  <button className="w-full py-3 bg-white/20 hover:bg-white/30 rounded-xl font-medium transition-colors text-left px-4">
-                    📊 View Analytics
-                  </button>
-                  <button className="w-full py-3 bg-white/20 hover:bg-white/30 rounded-xl font-medium transition-colors text-left px-4">
-                    💬 Customer Messages
+          {/* CENTER COLUMN — STATS + PRODUCTS */}
+          <div className="lg:col-span-6 space-y-8">
+            {/* STATS */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+              {stats.map((stat, i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-xl border p-4 shadow-sm hover:shadow-md transition"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div
+                      className={`w-10 h-10 rounded-lg bg-gradient-to-br ${stat.bgGradient} flex items-center justify-center text-lg text-white`}
+                    >
+                      {stat.icon}
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-[#6d5a3d]">{stat.title}</p>
+                  <h3 className="text-2xl font-bold text-[#3d3021]">
+                    {stat.value}
+                  </h3>
+
+                  <p
+                    className={`text-xs font-medium ${
+                      stat.changeType === "positive"
+                        ? "text-green-600"
+                        : stat.changeType === "negative"
+                          ? "text-red-600"
+                          : "text-[#8b6f47]"
+                    }`}
+                  >
+                    {stat.change}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* PRODUCTS */}
+            <div className="bg-white rounded-2xl border p-6 shadow-sm">
+              <h3 className="font-bold text-lg mb-4">
+                Products ({products.length})
+              </h3>
+
+              {products.length === 0 && (
+                <div className="text-center py-10">
+                  <p>No products yet</p>
+                  <button
+                    onClick={() => setShowAddProduct(true)}
+                    className="mt-4 px-6 py-3 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white rounded-xl"
+                  >
+                    + Add Product
                   </button>
                 </div>
-              </div>
+              )}
+            </div>
+          </div>
 
-              <div className="bg-white rounded-2xl border-2 border-[#d4c5b0]/50 p-6 shadow-sm">
-                <h3 className="text-lg font-bold text-[#3d3021] mb-4 font-display">AI Insights</h3>
-                <div className="space-y-3 text-sm">
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-blue-800">🎯 Pottery items are trending this week</p>
-                  </div>
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-                    <p className="text-emerald-800">💡 Consider adding more clay diyas</p>
-                  </div>
-                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                    <p className="text-amber-800">📸 Update product photos for better visibility</p>
-                  </div>
-                </div>
-              </div>
+          {/* SIDEBAR */}
+          <div className="lg:col-span-3 space-y-6">
+            <div className="bg-white rounded-2xl border p-6 shadow-sm">
+              <h3 className="font-bold mb-3">Performance</h3>
+              <ProgressRow label="Profile Views" percent="75%" />
+              <ProgressRow label="Product Clicks" percent="60%" />
+              <ProgressRow label="Conversion Rate" percent="45%" />
+            </div>
+
+            <div className="bg-white rounded-2xl border p-6 shadow-sm">
+              <h3 className="font-bold mb-3">Recent Activity</h3>
+              <ActivityItem title="Order shipped" time="2 hours ago" />
+              <ActivityItem title="New message" time="5 hours ago" />
+              <ActivityItem title="AI Verified product" time="1 day ago" />
             </div>
           </div>
         </div>
+
+        {showAddProduct && (
+          <AddProductModal onClose={() => setShowAddProduct(false)} />
+        )}
       </div>
-    </AppLayout>
-  )
+    </div>
+  );
+}
+
+/* ================= COMPONENTS ================= */
+
+function ProgressRow({ label, percent }) {
+  return (
+    <div className="mb-3">
+      <div className="flex justify-between text-xs mb-1">
+        <span>{label}</span>
+        <span>{percent}</span>
+      </div>
+      <div className="w-full bg-gray-200 h-2 rounded-full">
+        <div
+          className="bg-gradient-to-r from-[#c2794d] to-[#8b6f47] h-2 rounded-full"
+          style={{ width: percent }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function ActivityItem({ title, time }) {
+  return (
+    <div className="flex justify-between text-sm border-b py-2 last:border-0">
+      <span>{title}</span>
+      <span className="text-xs text-gray-500">{time}</span>
+    </div>
+  );
+}
+
+/* ================= MODAL ================= */
+
+function AddProductModal({ onClose }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    price: "",
+    category: "",
+    inventory: "",
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(formData);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl max-w-xl w-full p-6">
+        <h2 className="text-xl font-bold mb-4">Add Product</h2>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            className="w-full p-3 border rounded-xl"
+            placeholder="Product name"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          />
+
+          <textarea
+            className="w-full p-3 border rounded-xl"
+            placeholder="Description"
+            value={formData.description}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
+          />
+
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              className="p-3 border rounded-xl"
+              placeholder="Price"
+              value={formData.price}
+              onChange={(e) =>
+                setFormData({ ...formData, price: e.target.value })
+              }
+            />
+
+            <input
+              className="p-3 border rounded-xl"
+              placeholder="Stock"
+              value={formData.inventory}
+              onChange={(e) =>
+                setFormData({ ...formData, inventory: e.target.value })
+              }
+            />
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 border py-2 rounded-xl"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              className="flex-1 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white py-2 rounded-xl"
+            >
+              Add
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }

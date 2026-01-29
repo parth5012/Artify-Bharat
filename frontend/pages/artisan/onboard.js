@@ -1,5 +1,6 @@
 import AppLayout from "../../components/AppLayout";
 import { useState, useRef } from "react";
+import { useRouter } from 'next/router';
 
 const translations = {
   english: {
@@ -239,6 +240,7 @@ export default function ArtisanOnboarding() {
 
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
+  const router = useRouter();
 
   const t = translations[language];
 
@@ -328,6 +330,21 @@ export default function ArtisanOnboarding() {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  // Add this NEW FUNCTION after handleNext
+  const handleSaveContinue = () => {
+    // Save data to localStorage
+    const onboardingData = {
+      transcript,
+      story: generatedStory,
+      audioUrl,
+    };
+    
+    localStorage.setItem('artisan_onboarding', JSON.stringify(onboardingData));
+    
+    // Navigate to dashboard
+    router.push('/artisan/dashboard');
   };
 
   return (
@@ -484,6 +501,7 @@ export default function ArtisanOnboarding() {
                       {t.recordAgain}
                     </button>
                     <button
+                      onClick={handleSaveContinue}
                       className="flex-1 px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300"
                     >
                       {t.saveContinue}
