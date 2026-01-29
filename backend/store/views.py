@@ -289,6 +289,8 @@ def get_dashboard_stats(request):
         # AI verified
         stats["ai_verified"] = 98
         old_stats: DashboardStats = artisan.stats
+        artisan.stats = stats
+        artisan.save()
         change = DashboardStats()
         change["active_orders"] = stats["active_orders"] - old_stats["active_orders"]
         change["ai_verified"] = stats["ai_verified"] - old_stats["ai_verified"]
