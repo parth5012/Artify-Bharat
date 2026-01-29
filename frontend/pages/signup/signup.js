@@ -53,22 +53,20 @@ export default function Signup() {
   const handleSubmit = (e) => {
     e.preventDefault()
     console.log('Form submitted:', { ...formData, role: userRole })
-    // Add your registration logic here
-    signup(formData,userRole);
-//         // ✅ Redirect after signup
-//         if (userRole === "artisan") {
-//           router.push("/artisan/onboard");
-//         } else {
-//           router.push("/buyer/dashboard");
-//         }
-//       } else {
-//         alert(data.message || "Signup failed");
-//       }
-//     } catch (error) {
-//       console.log("Signup Error:", error);
-//       alert("Something went wrong!");
-//     }
-//   };
+    // Ad{d your registration logic here
+    try{
+      signup(formData,userRole);
+        // ✅ Redirect after signup
+        if (formData.userRole === "artisan") {
+          router.push("/artisan/onboard");
+        } else {
+          router.push("/buyer/dashboard");
+        }
+    } catch (error) {
+      console.log("Signup Error:", error);
+      alert("Something went wrong!");
+    }
+  };
 
 //as backend is not ready a temporary handleSubmit function
 
@@ -734,5 +732,4 @@ export default function Signup() {
       <div className="h-2 bg-gradient-to-r from-[#8b6f47] via-[#c2794d] to-[#8b6f47]"></div>
     </>
   );
-}
 }
