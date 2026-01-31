@@ -15,7 +15,7 @@ export async function login(formData){
 }
 
 export async function signup(formData,userRole){
-    const response =  await axios.post('http://localhost:8000/store/signup/',JSON.stringify({
+    const data = {
     userRole: userRole,
     firstName: formData.firstName,
     lastName: formData.lastName,
@@ -26,16 +26,18 @@ export async function signup(formData,userRole){
     city: formData.city,
     state: formData.state,
     pincode: formData.pincode,
-    craftSpecialty: formData.craftSpecialty | '',
-    experience: formData.experience | '',
-    bio: formData.bio | '',
-    interests: formData.interests | [],
-  }))
+    craftSpecialty: formData.craftSpecialty,
+    experience: formData.experience ,
+    bio: formData.bio ,
+    interests: formData.interests ,
+  };
+  console.log(data);
+    const response =  await axios.post('http://localhost:8000/store/signup/',data)
     if (response.status == 200){
-        console.log('Account Created Successfully!!')
+        console.log('Account Created Successfully!!');
     }
     else{
-        console.log('Account could not be created!!')
+        console.log('Account could not be created!!');
 
     }
 }

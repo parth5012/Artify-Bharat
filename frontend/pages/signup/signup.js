@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import Link from 'next/link'
 import { signup } from '@/utils/auth'
 import { useRouter } from "next/router";
 
 export default function Signup() {
+
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const [userRole, setUserRole] = useState("artisan"); // 'artisan' or 'buyer'
   const [formData, setFormData] = useState({
@@ -21,55 +23,62 @@ export default function Signup() {
     bio: "",
     interests: [],
   });
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
+  
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
+  
+  //   const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    
 //     try {
-//       // ✅ Send data to backend API
-//       const res = await fetch("http://localhost:5000/api/signup", {
-//         method: "POST",
+  //       // ✅ Send data to backend API
+  //       const res = await fetch("http://localhost:5000/api/signup", {
+    //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",
 //         },
 //         body: JSON.stringify({
-//           ...formData,
-//           role: userRole,
-//         }),
-//       });
+  //           ...formData,
+  //           role: userRole,
+  //         }),
+  //       });
+  
+  //       const data = await res.json();
+  
+  //       if (res.ok) {
+    //         alert("Account created successfully!");
+    
+    const handleSubmit = async (e) => { // 1. Added async here
+    e.preventDefault();
+    console.log('Form submitted:', { ...formData, role: userRole });
 
-//       const data = await res.json();
+    try {
+      // 2. Await the async signup function directly (Removed useEffect)
+      await signup(formData, userRole); 
 
-//       if (res.ok) {
-//         alert("Account created successfully!");
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('Form submitted:', { ...formData, role: userRole })
-    // Ad{d your registration logic here
-    try{
-      signup(formData,userRole);
-        // ✅ Redirect after signup
-        if (formData.userRole === "artisan") {
-          router.push("/artisan/onboard");
-        } else {
-          router.push("/buyer/dashboard");
-        }
+      // 3. Redirect based on the role
+      if (userRole === "artisan") {
+        router.push("/artisan/onboard");
+      } else {
+        router.push("/buyer/marketplace");
+      }
     } catch (error) {
-      console.log("Signup Error:", error);
-      alert("Something went wrong!");
+      console.error("Signup Error:", error);
+      // This is where your 'Axios Network Error' will be caught if the backend is down
+      alert("Registration failed. Please check if the server is online.");
     }
   };
-
-//as backend is not ready a temporary handleSubmit function
-
+  
+  //as backend is not ready a temporary handleSubmit function
+  
 
   const craftOptions = [
     "Pottery & Ceramics",
@@ -83,7 +92,7 @@ export default function Signup() {
     "Bamboo Craft",
     "Other",
   ];
-
+  
   const interestOptions = [
     "Home Decor",
     "Fashion & Accessories",
@@ -94,15 +103,19 @@ export default function Signup() {
     "Furniture",
     "Textiles",
   ];
-
+  
   const handleInterestToggle = (interest) => {
     setFormData((prev) => ({
       ...prev,
       interests: prev.interests.includes(interest)
-        ? prev.interests.filter((i) => i !== interest)
-        : [...prev.interests, interest],
+      ? prev.interests.filter((i) => i !== interest)
+      : [...prev.interests, interest],
     }));
   };
+  
+  if (!isClient) {
+    return null; // Prevents the mismatch by not rendering until client-side
+  }
 
   return (
     <>

@@ -230,12 +230,14 @@ class LogoutView(APIView):
 
 class SignupView(APIView):
     def post(self, request):
-        # print(request.data)
+        print(request.data)
         with atomic():
             user_model = get_user_model()
             user = user_model()
+
             user.first_name = request.data.get("firstName")
             user.last_name = request.data.get("lastName")
+            user.username = f"{user.first_name}{user.last_name}"
             user.email = request.data.get("email")
             user.password = request.data.get("password")
             user.phone_no = request.data.get("phone")
@@ -250,6 +252,7 @@ class SignupView(APIView):
             userRole = request.data.get("userRole")
             if userRole == "artisan":
                 artisan = Artisan()
+                print(request.data.get("craftSpecialty"))
                 artisan.speciality = request.data.get("craftSpeciality")
                 artisan.experience = request.data.get("experience")
                 artisan.bio = request.data.get("bio")
