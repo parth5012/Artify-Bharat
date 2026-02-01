@@ -253,7 +253,7 @@ class SignupView(APIView):
             if userRole == "artisan":
                 artisan = Artisan()
                 print(request.data.get("craftSpecialty"))
-                artisan.speciality = request.data.get("craftSpeciality")
+                artisan.speciality = request.data.get("craftSpecialty")
                 artisan.experience = request.data.get("experience")
                 artisan.bio = request.data.get("bio")
                 artisan.user_id = user.id
