@@ -1,6 +1,12 @@
 from django.urls import path
+
 # from django.urls.conf import include
 from rest_framework_nested import routers
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 from . import views
 
 router = routers.DefaultRouter()
@@ -28,5 +34,8 @@ urlpatterns = (
         path("login/", views.LoginView.as_view()),
         path("logout/", views.LogoutView.as_view()),
         path("signup/", views.SignupView.as_view()),
+        path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+        path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+        path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
     ]
 )

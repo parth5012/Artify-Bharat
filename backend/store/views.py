@@ -237,7 +237,6 @@ class SignupView(APIView):
 
             user.first_name = request.data.get("firstName")
             user.last_name = request.data.get("lastName")
-            user.username = f"{user.first_name}{user.last_name}"
             user.email = request.data.get("email")
             user.password = request.data.get("password")
             user.phone_no = request.data.get("phone")
@@ -250,6 +249,9 @@ class SignupView(APIView):
             address.user = user
             address.save()
             userRole = request.data.get("userRole")
+            login(
+                user,
+            )
             if userRole == "artisan":
                 artisan = Artisan()
                 print(request.data.get("craftSpecialty"))
@@ -270,7 +272,10 @@ class SignupView(APIView):
 
 @api_view(http_method_names=["GET"])
 def get_dashboard_stats(request):
-    if request.user.is_authenticated and hasattr(request.user, "artisan"):
+    if (
+        request.user.is_authenticated
+        and Artisan.objects.filter(user=request.user).exists()
+    ):
         artisan: Artisan = request.user.artisan
         stats: DashboardStats = DashboardStats()
         # Product count
