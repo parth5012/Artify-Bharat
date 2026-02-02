@@ -314,5 +314,6 @@ def get_dashboard_stats(request):
         change["ai_verified"] = stats["ai_verified"] - old_stats["ai_verified"]
         change["products_count"] = stats["products_count"] - old_stats["products_count"]
         change["total_sales"] = stats["total_sales"] - old_stats["total_sales"]
+        print(stats, change)
         return Response({"stats": stats, "change": change})
     return Response("You are not an Artisan!")

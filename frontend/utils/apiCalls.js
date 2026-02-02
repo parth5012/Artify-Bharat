@@ -28,6 +28,8 @@ export async function getProductsList() {
 export async function getDashboardStats() {
 
     const response = await api.get('store/stats/');
-    stats = response.data['stats']; 
-    change = response.data['change'];
+    return {
+        'stats': response.data['stats'],
+        'change': response.data['change'],
+    }
 }   

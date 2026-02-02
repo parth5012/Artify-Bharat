@@ -8,8 +8,8 @@ export async function login(formData){
     })
     
     if (response.status == 200){
-        localStorage.setItem('access_token', response.access);
-        localStorage.setItem('refresh_token', response.refresh);
+        localStorage.setItem('access_token', response.data.access);
+        localStorage.setItem('refresh_token', response.data.refresh);
         console.log('Logged In Successfully!!')
     }
     else{
@@ -40,8 +40,8 @@ export async function signup(formData,userRole){
   const { token } = response.data;
   
   // Save token to localStorage
-  localStorage.setItem('access_token', response.access);
-  localStorage.setItem('refresh_token', response.refresh);
+  localStorage.setItem('access_token', response.data.access);
+  localStorage.setItem('refresh_token', response.data.refresh);
   
   if (response.status == 200){
       console.log('Account Created Successfully!!');

@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { getDashboardStats } from "@/utils/apiCalls";
 
 /* ================= DASHBOARD ================= */
 
 export default function ArtisanDashboard() {
   const router = useRouter();
-  const data = [];
+  const [data,setData] = useState({});
+  const [change,setChange] = useState({});
   const [artisanData] = useState({
     name: "Rajesh Kumar",
     profileImage: null,
@@ -22,38 +24,53 @@ export default function ArtisanDashboard() {
   const [showAddProduct, setShowAddProduct] = useState(false);
    
   useEffect(() => {
-    
-  })
+  // Define the async function inside
+  const fetchStats = async () => {
+    try {
+      const response = await getDashboardStats();
+      // Ensure response has the expected structure
+      if (response) {
+        setData(response.data || {});
+        setChange(response.change || {});
+      }
+    } catch (error) {
+      console.error("Failed to fetch stats:", error);
+    }
+  };
+
+  fetchStats();
+}, []);
+  console.log(data,change);
   const stats = [
     {
       title: "Total Products",
-      value: "24",
+      value: data['products_count'],
       icon: "🎨",
-      change: "+3 this week",
+      change: change['products_count'],
       changeType: "positive",
       bgGradient: "from-blue-500 to-blue-600",
     },
     {
       title: "Total Sales",
-      value: "₹45,280",
+      value: data['total_sales'],
       icon: "💰",
-      change: "+12% this month",
+      change: change['total_sales'],
       changeType: "positive",
       bgGradient: "from-emerald-500 to-emerald-600",
     },
     {
       title: "Active Orders",
-      value: "8",
+      value: data['active_orders'],
       icon: "📦",
-      change: "2 pending",
+      change: change['active_orders'],
       changeType: "neutral",
       bgGradient: "from-orange-500 to-orange-600",
     },
     {
       title: "AI Verified",
-      value: "18",
+      value: data['ai_verified'],
       icon: "✓",
-      change: "75% of products",
+      change: change['ai_verified'],
       changeType: "positive",
       bgGradient: "from-purple-500 to-purple-600",
     },
