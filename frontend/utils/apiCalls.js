@@ -24,7 +24,8 @@ export async function getProductsList() {
 
 
 
-// export async function getDashboardStats() {
-//     let stats = [];
-//     stats[0] = await 
-// }
+export async function getDashboardStats() {
+    const response = await axios.get('http://localhost:8000/store/stats/');
+    stats = respponse.data['stats']; 
+    change = response.data['change'];
+}   

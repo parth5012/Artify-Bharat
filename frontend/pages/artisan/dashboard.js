@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 
 export default function ArtisanDashboard() {
   const router = useRouter();
-
+  const data = [];
   const [artisanData] = useState({
     name: "Rajesh Kumar",
     profileImage: null,
@@ -20,7 +20,10 @@ export default function ArtisanDashboard() {
 
   const [products, setProducts] = useState([]);
   const [showAddProduct, setShowAddProduct] = useState(false);
-
+   
+  useEffect(() => {
+    
+  })
   const stats = [
     {
       title: "Total Products",

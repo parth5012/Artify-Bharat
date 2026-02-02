@@ -144,3 +144,10 @@ CORS_ALLOWED_ORIGINS = [
 
 
 PHONENUMBER_DEFAULT_REGION = "IN"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "django.contrib.auth.backends.ModelBackend",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    )
+}
