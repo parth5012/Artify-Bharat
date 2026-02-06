@@ -1,6 +1,7 @@
 import AppLayout from "../../components/AppLayout";
 import { useState, useRef } from "react";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
+import axios from "axios";
 
 const translations = {
   english: {
@@ -27,7 +28,8 @@ const translations = {
       "Explain what makes your craft special",
     ],
     storyMatters: "Your Story Matters",
-    storyDesc: "AI will generate multilingual descriptions from your voice, reaching customers in 7+ languages automatically",
+    storyDesc:
+      "AI will generate multilingual descriptions from your voice, reaching customers in 7+ languages automatically",
     storyReady: "Your Story is Ready!",
     transcriptLabel: "Transcript:",
     generatedStoryLabel: "Generated Product Story:",
@@ -59,7 +61,8 @@ const translations = {
       "अपनी कला को खास क्या बनाता है बताएं",
     ],
     storyMatters: "आपकी कहानी महत्वपूर्ण है",
-    storyDesc: "AI आपकी आवाज़ से कई भाषाओं में विवरण तैयार करेगा और ग्राहकों तक पहुँचेगा",
+    storyDesc:
+      "AI आपकी आवाज़ से कई भाषाओं में विवरण तैयार करेगा और ग्राहकों तक पहुँचेगा",
     storyReady: "आपकी कहानी तैयार है!",
     transcriptLabel: "ट्रांस्क्रिप्ट:",
     generatedStoryLabel: "जेनरेट की गई कहानी:",
@@ -249,7 +252,9 @@ export default function ArtisanOnboarding() {
     if (!isRecording) {
       // Start recording
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
         const mediaRecorder = new MediaRecorder(stream);
         mediaRecorderRef.current = mediaRecorder;
         audioChunksRef.current = [];
@@ -259,13 +264,15 @@ export default function ArtisanOnboarding() {
         };
 
         mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+          const audioBlob = new Blob(audioChunksRef.current, {
+            type: "audio/wav",
+          });
           const url = URL.createObjectURL(audioBlob);
           setAudioBlob(audioBlob);
           setAudioUrl(url);
-          
+
           // Stop all tracks
-          stream.getTracks().forEach(track => track.stop());
+          stream.getTracks().forEach((track) => track.stop());
         };
 
         mediaRecorder.start();
@@ -276,7 +283,10 @@ export default function ArtisanOnboarding() {
       }
     } else {
       // Stop recording
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state !== "inactive"
+      ) {
         mediaRecorderRef.current.stop();
         setIsRecording(false);
       }
@@ -303,27 +313,29 @@ export default function ArtisanOnboarding() {
     try {
       // Create FormData and append audio file
       const formData = new FormData();
-      formData.append('file', audioBlob, 'recording.wav');
+      formData.append("file", audioBlob, "recording.wav");
 
       // Send to backend
-      const response = await fetch('http://localhost:8002/transcribe', {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await axios.post(
+        "http://localhost:8002/transcribe",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to process audio');
+        throw new Error("Failed to process audio");
       }
 
       const data = await response.json();
-      
+
       // Set results
       setTranscript(data.transcript);
       setGeneratedStory(data.story);
-      
+
       // Move to next step to show results
       setCurrentStep(2);
-
     } catch (error) {
       console.error("Error processing audio:", error);
       alert("Failed to process your recording. Please try again.");
@@ -340,11 +352,11 @@ export default function ArtisanOnboarding() {
       story: generatedStory,
       audioUrl,
     };
-    
-    localStorage.setItem('artisan_onboarding', JSON.stringify(onboardingData));
-    
+
+    localStorage.setItem("artisan_onboarding", JSON.stringify(onboardingData));
+
     // Navigate to dashboard
-    router.push('/artisan/dashboard');
+    router.push("/artisan/dashboard");
   };
 
   return (
@@ -362,7 +374,6 @@ export default function ArtisanOnboarding() {
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Left: Onboarding Form */}
             <div className="bg-white rounded-2xl border-2 border-[#d4c5b0]/50 p-6 md:p-8 shadow-sm">
-              
               {/* Language Selector */}
               <div className="mb-6">
                 <label className="block text-sm font-semibold text-[#3d3021] mb-2">
@@ -433,7 +444,9 @@ export default function ArtisanOnboarding() {
                     {audioUrl && !isRecording && (
                       <div className="mt-6 p-4 bg-green-50 border-2 border-green-200 rounded-xl">
                         <div className="flex items-center justify-between mb-2">
-                          <p className="font-semibold text-green-800">✅ {t.recordingComplete}</p>
+                          <p className="font-semibold text-green-800">
+                            ✅ {t.recordingComplete}
+                          </p>
                           <button
                             onClick={handleDeleteRecording}
                             className="text-red-500 hover:text-red-700 font-medium"
@@ -479,14 +492,20 @@ export default function ArtisanOnboarding() {
 
                   {/* Transcript */}
                   <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
-                    <h4 className="font-semibold text-blue-900 mb-2">📝 {t.transcriptLabel}</h4>
+                    <h4 className="font-semibold text-blue-900 mb-2">
+                      📝 {t.transcriptLabel}
+                    </h4>
                     <p className="text-sm text-blue-800">{transcript}</p>
                   </div>
 
                   {/* Generated Story */}
                   <div className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl p-6">
-                    <h4 className="font-semibold text-amber-900 mb-3 text-lg">✨ {t.generatedStoryLabel}</h4>
-                    <p className="text-amber-900 leading-relaxed">{generatedStory}</p>
+                    <h4 className="font-semibold text-amber-900 mb-3 text-lg">
+                      ✨ {t.generatedStoryLabel}
+                    </h4>
+                    <p className="text-amber-900 leading-relaxed">
+                      {generatedStory}
+                    </p>
                   </div>
 
                   {/* Action Buttons */}
@@ -532,9 +551,7 @@ export default function ArtisanOnboarding() {
                 <p className="text-lg font-semibold text-[#3d3021] mb-2">
                   {t.storyMatters}
                 </p>
-                <p className="text-sm text-[#6d5a3d]">
-                  {t.storyDesc}
-                </p>
+                <p className="text-sm text-[#6d5a3d]">{t.storyDesc}</p>
               </div>
             </div>
           </div>
