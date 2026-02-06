@@ -93,7 +93,13 @@ export default function ArtisanDashboard() {
         <div className="grid lg:grid-cols-12 gap-6">
           {/* PROFILE */}
           <div className="lg:col-span-3 space-y-6">
-            <div className="bg-white rounded-2xl border p-6 shadow-sm">
+            <div
+              className="
+                    bg-white rounded-2xl border p-6 shadow-sm
+                    min-h-[560px] 
+                    flex flex-col
+                    "
+            >
               <div className="flex justify-center mb-4">
                 <div className="relative group">
                   {artisanData.profileImage ? (
@@ -144,9 +150,14 @@ export default function ArtisanDashboard() {
           </div>
 
           {/* CENTER COLUMN — STATS + PRODUCTS */}
-          <div className="lg:col-span-6 space-y-8">
+          <div className="
+              lg:col-span-6 space-y-8
+              min-h-[50px]
+              max-h-[750px]
+              overflow-y-auto"
+          >
             {/* STATS */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 min-h-[160px]">
               {stats.map((stat, i) => (
                 <div
                   key={i}
@@ -181,7 +192,7 @@ export default function ArtisanDashboard() {
             </div>
 
             {/* PRODUCTS */}
-            <div className="bg-white rounded-2xl border p-6 shadow-sm">
+            <div className="bg-white rounded-2xl border p-6 shadow-sm min-h-[368px]">
               <h3 className="font-bold text-lg mb-4">
                 Products ({products.length})
               </h3>

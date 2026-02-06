@@ -306,7 +306,7 @@ export default function ArtisanOnboarding() {
       formData.append('file', audioBlob, 'recording.wav');
 
       // Send to backend
-      const response = await fetch('http://localhost:8001/process-audio', {
+      const response = await fetch('http://localhost:8002/transcribe', {
         method: 'POST',
         body: formData,
       });
