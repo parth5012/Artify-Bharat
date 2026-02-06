@@ -25,7 +25,7 @@ async def create_story(product: str, request: Request):
     return generate_story(product)
 
 
-@app.get("/transcribe")
+@app.post("/transcribe")
 async def transcribe(request: Request, file: UploadFile = File(...)):
     audio_bytes = file.read()
     try:
