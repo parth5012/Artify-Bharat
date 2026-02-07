@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from utils.transcription import get_transcription
-from utils.story_generation import generate_story
+from utils.story_generation import generate_artisan_story, generate_product_story
 
 
 app = FastAPI()
@@ -22,15 +22,20 @@ app.add_middleware(
 
 @app.get("/story/{product:str}")
 async def create_story(product: str, request: Request):
-    return generate_story(product)
+    return generate_product_story(product)
 
 
-@app.get("/transcribe")
-async def transcribe(request: Request, file: UploadFile = File(...)):
-    audio_bytes = file.read()
+@app.post("/process_audio")
+async def process_audio(request: Request, file: UploadFile = File(...)):
+    audio_bytes = await file.read()
+    # Transcribe!!
     try:
         transcription = get_transcription(audio_bytes)
-
+        print(transcription)
     except RuntimeError:
         return {"error": "Couldn't transcribe the audio!!"}
-    return {"text": transcription}
+    # Story Generation!!
+    story = generate_artisan_story(transcription)
+
+    # Return the Response!! 
+    return {"text": transcription, "story": story}

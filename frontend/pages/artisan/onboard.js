@@ -317,22 +317,22 @@ export default function ArtisanOnboarding() {
 
       // Send to backend
       const response = await axios.post(
-        "http://localhost:8002/transcribe",
+        "http://localhost:8002/process_audio",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
         },
       );
-
-      if (!response.ok) {
+      console.log(response);
+      if (response.status != 200) {
         throw new Error("Failed to process audio");
       }
 
-      const data = await response.json();
+      const data = response.data;
 
       // Set results
-      setTranscript(data.transcript);
-      setGeneratedStory(data.story);
+      setTranscript(data.text || "");
+      setGeneratedStory(data.story || "");
 
       // Move to next step to show results
       setCurrentStep(2);
