@@ -317,7 +317,7 @@ export default function ArtisanOnboarding() {
 
       // Send to backend
       const response = await axios.post(
-        "http://localhost:8002/transcribe",
+        "http://localhost:8002/process_audio",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -331,7 +331,7 @@ export default function ArtisanOnboarding() {
       const data = response.data;
 
       // Set results
-      setTranscript(data.text);
+      setTranscript(data.text || "");
       setGeneratedStory(data.story || "");
 
       // Move to next step to show results
