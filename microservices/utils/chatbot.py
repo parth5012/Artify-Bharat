@@ -3,13 +3,13 @@ from langgraph.graph import StateGraph, START
 from typing import TypedDict, Annotated
 from langchain_core.messages import BaseMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langgraph.checkpoint.sqlite import SqliteSaver
+from langgraph.checkpoint.postgres import PostgresSaver
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 from langchain_community.tools import DuckDuckGoSearchRun
 from dotenv import load_dotenv
-import sqlite3
 import os
+from psycopg_pool import ConnectionPool
 
 load_dotenv()
 
@@ -25,7 +25,9 @@ llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"))
 search_tool = DuckDuckGoSearchRun(region="us-en")
 
 
-tools = [search_tool,]
+tools = [
+    search_tool,
+]
 llm_with_tools = llm.bind_tools(tools)
 
 
@@ -51,8 +53,11 @@ tool_node = ToolNode(tools)
 # -------------------
 # 5. Checkpointer
 # -------------------
-conn = sqlite3.connect(database="chatbot.db", check_same_thread=False)
-checkpointer = SqliteSaver(conn=conn)
+URI = os.getenv("POSTGRES_CONN_STRING")
+pool = ConnectionPool(conninfo=URI, max_size=10)
+checkpointer = PostgresSaver(pool)
+
+checkpointer.setup()
 
 # -------------------
 # 6. Graph
