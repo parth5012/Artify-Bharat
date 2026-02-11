@@ -3,12 +3,10 @@ from langgraph.graph import StateGraph, START
 from typing import TypedDict, Annotated
 from langchain_core.messages import BaseMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langgraph.checkpoint.postgres import PostgresSaver
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 from dotenv import load_dotenv
 import os
-from psycopg_pool import ConnectionPool
 from utils.tools import tools
 
 load_dotenv()
@@ -45,17 +43,9 @@ def chat_node(state: ChatState):
 
 tool_node = ToolNode(tools)
 
-# -------------------
-# 5. Checkpointer
-# -------------------
-URI = os.getenv("POSTGRES_CONN_STRING")
-pool = ConnectionPool(conninfo=URI, max_size=10)
-checkpointer = PostgresSaver(pool)
-
-checkpointer.setup()
 
 # -------------------
-# 6. Graph
+# 5. Graph
 # -------------------
 graph = StateGraph(ChatState)
 graph.add_node("chat_node", chat_node)
@@ -66,4 +56,4 @@ graph.add_edge(START, "chat_node")
 graph.add_conditional_edges("chat_node", tools_condition)
 graph.add_edge("tools", "chat_node")
 
-chatbot = graph.compile(checkpointer=checkpointer)
+chatbot = graph.compile()
