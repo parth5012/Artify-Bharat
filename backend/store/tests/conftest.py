@@ -1,7 +1,7 @@
 from rest_framework.test import APIClient
 from django.contrib.auth import get_user_model
 import pytest
-from store.models import Artisan
+from store.models import Artisan, Customer
 import os
 from dotenv import load_dotenv
 
@@ -38,5 +38,21 @@ def artisan_user(db):
         user=user,
         speciality="pottery",
         experience=1,
+    )
+    return user
+
+
+@pytest.fixture
+def customer_user(db):
+    """Creates a test customer user in the test database."""
+    user = User()
+    user.first_name = "Test"
+    user.last_name = "Customer"
+    user.email = os.getenv("BUYER_EMAIL")
+    user.set_password(os.getenv("BUYER_PASS"))
+    user.save()
+
+    Customer.objects.get_or_create(
+        user=user,
     )
     return user

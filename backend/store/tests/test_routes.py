@@ -89,19 +89,32 @@ class TestDashboardStats:
         )
         assert response.status_code == status.HTTP_200_OK
 
-    # def test_get_stats_returns_401(self,api_client):
-    #     email = os.getenv('BUYER_EMAIL')
-    #     password = os.getenv('BUYER_PASS')
-    #     response :Response = api_client.post('api/token/',{
-    #         'email': email,
-    #         'password':  password
-    #     })
+    def test_get_stats_returns_403(self, api_client, customer_user):
+        email = os.getenv("BUYER_EMAIL")
+        password = os.getenv("BUYER_PASS")
 
-    #     assert response.status_code == status.HTTP_200_OK
-    #     assert response.data['user_type'] == 'buyer'
-    #     access_token = response.data['access']
-    #     response = api_client.post('store/stats/',access_token)
-    #     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        response: Response = api_client.post(
+            "/api/token/",
+            {"email": email, "password": password},
+            content_type="application/json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["user_type"] == "buyer"
+        access_token = response.data["access"]
+        response = api_client.get(
+            "/store/stats/",
+            headers={
+                "Authorization": f"Bearer {access_token}",
+            },
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_get_stats_returns_401(self, api_client):
+        response = api_client.get(
+            "/store/stats/",
+        )
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 @pytest.mark.django_db
