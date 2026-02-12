@@ -57,8 +57,25 @@ class TestSignup:
 
 @pytest.mark.django_db
 class TestLogin:
-    def test_login_returns_200(self, api_client):
-        pass
+    def test_artisan_login_returns_200(self, api_client, artisan_user):
+        email = os.getenv("ARTISAN_EMAIL")
+        password = os.getenv("ARTISAN_PASS")
+        response: Response = api_client.post(
+            "/api/token/",
+            {"email": email, "password": str(password)},
+            content_type="application/json",
+        )
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_customer_login_returns_200(self, api_client, customer_user):
+        email = os.getenv("BUYER_EMAIL")
+        password = os.getenv("BUYER_PASS")
+        response: Response = api_client.post(
+            "/api/token/",
+            {"email": email, "password": str(password)},
+            content_type="application/json",
+        )
+        assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db
