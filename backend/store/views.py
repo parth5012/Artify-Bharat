@@ -19,7 +19,11 @@ from rest_framework.permissions import (
     IsAdminUser,
     IsAuthenticated,
 )
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import (
+    ValidationError,
+    PermissionDenied,
+    NotAuthenticated,
+)
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.decorators import api_view
@@ -248,14 +252,12 @@ class OrderViewSet(ModelViewSet):
         if user.is_staff:
             print("hm")
             return Order.objects.all()
-        elif self.request.query_params.get("role").lower() == "artisan":
-            print(user.artisan.id)
+        elif self.request.user and Artisan.objects.filter(user=self.request.user):
             orders = list(
                 Order.objects.filter(items__product__artisan=user.artisan)
                 .distinct()
                 .all()
             )
-            print(orders)
             return orders
 
         customer_id = Customer.objects.only("id").get(user_id=user.id)
@@ -323,12 +325,12 @@ class SignupView(APIView):
                 artisan.user_id = user.id
                 artisan.save()
             elif userRole == "buyer":
-                customer = Customer()
+                customer, created = Customer.objects.get_or_create(user=user)
                 customer.user = user
                 customer.interests = list(request.data.get("interests"))
                 customer.save()
             else:
-                return ValidationError("Client Side Error!!")
+                raise ValidationError("Client Side Error!!")
         refresh = RefreshToken.for_user(user)
 
         return Response(
@@ -336,45 +338,47 @@ class SignupView(APIView):
                 "message": "Success",
                 "access": str(refresh.access_token),
                 "refresh": str(refresh),
-            }
+            },
+            status=status.HTTP_201_CREATED,
         )
         # return Response("Account Created Successfully!!")
 
 
 @api_view(http_method_names=["GET"])
 def get_dashboard_stats(request):
-    if (
-        request.user.is_authenticated
-        and Artisan.objects.filter(user=request.user).exists()
-    ):
-        artisan: Artisan = request.user.artisan
-        stats: DashboardStats = DashboardStats()
-        # Product count
-        stats["products_count"] = artisan.products.count()
-        # Total sales
-        total_price = 0
-        for item in artisan.orderitems.filter(order__delivered=True).all():
-            total_price += item.quantity * item.unit_price
-        stats["total_sales"] = total_price
-        # Active orders
-        # stats["active_orders"] = artisan.orderitems.order.filter(
-        #     delivered=False
-        # ).count()
-        stats["active_orders"] = (
-            Order.objects.filter(items__product__artisan=artisan, delivered=False)
-            .distinct()
-            .count()
-        )
-        # AI verified
-        stats["ai_verified"] = 98
-        old_stats: DashboardStats = artisan.stats
-        artisan.stats = stats
-        artisan.save()
-        change = DashboardStats()
-        change["active_orders"] = stats["active_orders"] - old_stats["active_orders"]
-        change["ai_verified"] = stats["ai_verified"] - old_stats["ai_verified"]
-        change["products_count"] = stats["products_count"] - old_stats["products_count"]
-        change["total_sales"] = stats["total_sales"] - old_stats["total_sales"]
-        print(stats, change)
-        return Response({"stats": stats, "change": change})
-    return ValidationError("You are not an Artisan!",status.HTTP_401_UNAUTHORIZED)
+    if not request.user.is_authenticated:
+        raise NotAuthenticated()  # Returns 401
+
+    if not Artisan.objects.filter(user=request.user).exists():
+        raise PermissionDenied("You are not an Artisan!")  # Returns 403
+
+    artisan: Artisan = request.user.artisan
+    stats: DashboardStats = DashboardStats()
+    # Product count
+    stats["products_count"] = artisan.products.count()
+    # Total sales
+    total_price = 0
+    for item in artisan.orderitems.filter(order__delivered=True).all():
+        total_price += item.quantity * item.unit_price
+    stats["total_sales"] = total_price
+    # Active orders
+    # stats["active_orders"] = artisan.orderitems.order.filter(
+    #     delivered=False
+    # ).count()
+    stats["active_orders"] = (
+        Order.objects.filter(items__product__artisan=artisan, delivered=False)
+        .distinct()
+        .count()
+    )
+    # AI verified
+    stats["ai_verified"] = 98
+    old_stats: DashboardStats = artisan.stats
+    artisan.stats = stats
+    artisan.save()
+    change = DashboardStats()
+    change["active_orders"] = stats["active_orders"] - old_stats["active_orders"]
+    change["ai_verified"] = stats["ai_verified"] - old_stats["ai_verified"]
+    change["products_count"] = stats["products_count"] - old_stats["products_count"]
+    change["total_sales"] = stats["total_sales"] - old_stats["total_sales"]
+    print(stats, change)
+    return Response({"stats": stats, "change": change})
