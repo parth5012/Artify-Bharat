@@ -141,6 +141,7 @@ AUTH_USER_MODEL = "core.User"
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Example for a React dev server
+    "http://localhost:8002",  # FastAPI server
 ]
 
 
