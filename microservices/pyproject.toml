@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "assemblyai>=0.48.4",
+    "colorama>=0.4.6",
+    "ddgs>=9.10.0",
     "fastapi[standard]>=0.128.0",
     "httpx>=0.28.1",
     "langchain>=1.2.7",
@@ -16,4 +18,5 @@ dependencies = [
     "python-dotenv>=1.2.1",
     "python-multipart>=0.0.22",
     "werkzeug>=3.1.5",
+    "whoosh>=2.7.4",
 ]
