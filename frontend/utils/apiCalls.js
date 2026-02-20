@@ -1,59 +1,49 @@
 import api from "./axiosConfig";
 
 export async function getProductsList() {
-    try {
-        const response = await api.get('store/products/');
-        
-        // Check for successful status and ensure data.results exists
-        if (response.status === 200 && Array.isArray(response.data.results)) {
-            console.log(response.data.results)
-            return response.data.results;
-        }
-        
-        // If results isn't an array, return an empty array to prevent .filter() crashes
-        return [];
-    } catch (error) {
-        // Log the specific error (like ECONNREFUSED) for debugging
-        console.error("API Call Failed:", error.message);
-        
-        // Always return an array so the frontend doesn't break
-        return [];
+  try {
+    const response = await api.get("store/products/");
+
+    // Check for successful status and ensure data.results exists
+    if (response.status === 200 && Array.isArray(response.data.results)) {
+      console.log(response.data.results);
+      return response.data.results;
     }
+
+    // If results isn't an array, return an empty array to prevent .filter() crashes
+    return [];
+  } catch (error) {
+    // Log the specific error (like ECONNREFUSED) for debugging
+    console.error("API Call Failed:", error.message);
+
+    // Always return an array so the frontend doesn't break
+    return [];
+  }
 }
 // getProductsList();
 
-
-
 export async function getDashboardStats() {
-
-    const response = await api.get('store/stats/');
-    return {
-        'stats': response.data['stats'],
-        'change': response.data['change'],
-    }
+  const response = await api.get("store/stats/");
+  return {
+    stats: response.data["stats"],
+    change: response.data["change"],
+  };
 }
 
 export async function getOrders() {
-    const response = await api.get('store/orders/',{
-        params:
-    {
-        'role': 'artisan'
-    } 
-})
-    console.log(response.data)
-    return response.data
-    
+  const response = await api.get("store/orders/");
+  console.log(response.data);
+  return response.data;
 }
 
 export async function createProduct(formData) {
-    console.log(formData);
-    const response = await api.post('/store/products/',formData)
-    if (response.status === 200){
-        console.log('Product added succesfully!!');
-        return 1;
-    }
-    else{
-        Promise.reject()    
-        return 0;
-    }
+  console.log(formData);
+  const response = await api.post("/store/products/", formData);
+  if (response.status === 200) {
+    console.log("Product added succesfully!!");
+    return 1;
+  } else {
+    Promise.reject();
+    return 0;
+  }
 }

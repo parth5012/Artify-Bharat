@@ -17,5 +17,18 @@ def get_index():
     return open_dir("index")
 
 
-def index_product_names():
-    requests.get('http://localhost:8000/store/products/names/')
+def index_product_names(token):
+    try:
+        response = requests.get("http://localhost:8000/store/products/names/",headers={
+            'Authorization': f'Bearer {token}'
+        })
+        if response.status_code == 200:
+            data = response.json()
+            print(data)
+            # return data
+    except Exception as e:
+        print("Couldn't connect to django server!! \n Error:", e)
+        return 
+    for product in data:
+        index = get_index()
+        pass
