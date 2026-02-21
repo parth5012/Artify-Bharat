@@ -145,33 +145,33 @@ function DashboardContent() {
   const stats = [
     {
       title: "Total Products",
-      value: data['products_count'],
+      value: data["products_count"],
       icon: "🎨",
-      change: change['products_count'],
+      change: change["products_count"],
       changeType: "positive",
       bgGradient: "from-blue-500 to-blue-600",
     },
     {
       title: "Total Sales",
-      value: data['total_sales'],
+      value: data["total_sales"],
       icon: "💰",
-      change: change['total_sales'],
+      change: change["total_sales"],
       changeType: "positive",
       bgGradient: "from-emerald-500 to-emerald-600",
     },
     {
       title: "Active Orders",
-      value: data['active_orders'],
+      value: data["active_orders"],
       icon: "📦",
-      change: change['active_orders'],
+      change: change["active_orders"],
       changeType: "neutral",
       bgGradient: "from-orange-500 to-orange-600",
     },
     {
       title: "AI Verified",
-      value: data['ai_verified'],
+      value: data["ai_verified"],
       icon: "✓",
-      change: change['ai_verified'],
+      change: change["ai_verified"],
       changeType: "positive",
       bgGradient: "from-purple-500 to-purple-600",
     },
@@ -296,7 +296,8 @@ function DashboardContent() {
           </div>
 
           {/* CENTER COLUMN — STATS + PRODUCTS */}
-          <div className="
+          <div
+            className="
               lg:col-span-6 space-y-8
               min-h-[50px]
               max-h-[750px]

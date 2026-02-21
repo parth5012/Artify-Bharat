@@ -17,5 +17,5 @@ def get_transcription(audio: __file__) -> str:
 
     if transcript.status == "error":
         raise RuntimeError(f"Transcription failed: {transcript.error}")
-
+    print("Transcription: ", transcript.text)
     return transcript.text

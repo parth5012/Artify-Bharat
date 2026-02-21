@@ -19,7 +19,11 @@ from rest_framework.permissions import (
     IsAdminUser,
     IsAuthenticated,
 )
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import (
+    ValidationError,
+    PermissionDenied,
+    NotAuthenticated,
+)
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.decorators import api_view
@@ -287,7 +291,6 @@ class OrderViewSet(ModelViewSet):
                 .distinct()
                 .all()
             )
-            print(orders)
             return orders
 
         customer_id = Customer.objects.only("id").get(user_id=user.id)
@@ -361,7 +364,7 @@ class SignupView(APIView):
                 customer.save()
 
             else:
-                return ValidationError("Client Side Error!!")
+                raise ValidationError("Client Side Error!!")
         refresh = RefreshToken.for_user(user)
 
         return Response(
@@ -369,7 +372,8 @@ class SignupView(APIView):
                 "message": "Success",
                 "access": str(refresh.access_token),
                 "refresh": str(refresh),
-            }
+            },
+            status=status.HTTP_201_CREATED,
         )
         # return Response("Account Created Successfully!!")
 

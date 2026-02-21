@@ -21,10 +21,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from debug_toolbar.toolbar import debug_toolbar_urls
 from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
+from core.views import MyTokenObtainPairView
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),

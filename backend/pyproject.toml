@@ -17,9 +17,17 @@ dependencies = [
     "faker>=40.4.0",
     "gunicorn>=24.1.1",
     "pillow>=12.1.0",
+    "python-dotenv>=1.2.1",
     "redis>=7.1.0",
     "google-auth>=2.36.0",
     "google-auth-oauthlib>=1.2.1",
     "requests>=2.32.3",
     "python-dotenv>=1.2.1",
+]
+
+[dependency-groups]
+dev = [
+    "model-bakery>=1.23.2",
+    "pytest>=9.0.2",
+    "pytest-django>=4.11.1",
 ]
