@@ -120,3 +120,18 @@ export const deleteProduct = async (productId) => {
         return false;
     }
 };
+
+export async function getProductDetail(productId) {
+    try {
+        const response = await api.get(`store/products/${productId}/`);
+        console.log("Product detail response:", response.data);
+
+        if (response.status === 200) {
+            return response.data;
+        }
+        return null;
+    } catch (error) {
+        console.error("Get product detail error:", error.message);
+        return null;
+    }
+}
