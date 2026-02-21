@@ -151,8 +151,6 @@ export default function Login() {
             </Link>
 
             <Link
-
-            <Link
               href="/"
               className="text-sm text-[#6d5a3d] hover:text-[#c2794d] transition-colors flex items-center space-x-2"
             >
@@ -314,12 +312,9 @@ export default function Login() {
                       <label className="flex items-center space-x-2 cursor-pointer">
                         <input
                           type="checkbox"
-                        <input
-                          type="checkbox"
                           name="rememberMe"
                           checked={formData.rememberMe}
                           onChange={handleInputChange}
-                          className="w-4 h-4 rounded border-[#c2794d] text-[#c2794d] focus:ring-[#c2794d]"
                           className="w-4 h-4 rounded border-[#c2794d] text-[#c2794d] focus:ring-[#c2794d]"
                         />
                         <span className="text-[#6d5a3d]">Remember me</span>
