@@ -11,13 +11,21 @@ A Next.js application that empowers Indian artisans through AI-driven voice onbo
 - 💰 **Fair AI Pricing**: ML-powered price recommendations
 - 📊 **Admin Dashboard**: Review queue for product approvals
 - 🛍️ **Marketplace**: Browse and purchase authentic handmade products
+- 🔐 **OAuth Authentication**: Login with Google and Facebook
 
 ## Tech Stack
 
+### Frontend
 - **Framework**: Next.js 14
 - **Styling**: Tailwind CSS
 - **Language**: JavaScript
 - **Fonts**: Inter, Poppins, Noto Sans Devanagari
+
+### Backend
+- **Framework**: Django 6.0
+- **API**: Django REST Framework
+- **Authentication**: JWT + OAuth (Google, Facebook)
+- **Database**: SQLite (development) / PostgreSQL (production)
 
 ## Getting Started
 
@@ -25,6 +33,8 @@ A Next.js application that empowers Indian artisans through AI-driven voice onbo
 
 - Node.js 18+ 
 - npm or yarn
+- Python 3.13+
+- uv (Python package manager)
 
 ### Installation
 
@@ -34,40 +44,83 @@ git clone <repository-url>
 cd artify-bharat
 ```
 
-2. Install dependencies:
+2. **Backend Setup**:
 ```bash
+cd backend
+uv sync
+python manage.py migrate
+python manage.py runserver
+```
+
+3. **Frontend Setup**:
+```bash
+cd frontend
 npm install
-# or
-yarn install
-```
-
-3. Run the development server:
-```bash
 npm run dev
-# or
-yarn dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+4. **Google OAuth Setup** (Required for Google Login):
+
+   a. **Google Cloud Console Configuration**:
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select existing one
+   - Navigate to "APIs & Services" > "Credentials"
+   - Click "Create Credentials" > "OAuth 2.0 Client ID"
+   - Configure OAuth consent screen (add test users if in Testing mode)
+   - Add Authorized JavaScript origins: `http://localhost:3000`
+   - Add Authorized redirect URIs:
+     - `http://localhost:3000`
+     - `http://localhost:3000/login/login`
+   - Copy the Client ID
+
+   b. **Backend Configuration**:
+   - Create `backend/.env` file:
+   ```bash
+   SECRET_KEY=your-secret-key
+   DEBUG=True
+   GOOGLE_OAUTH_CLIENT_ID=your-client-id.apps.googleusercontent.com
+   ```
+
+   c. **Frontend Configuration**:
+   - Create `frontend/.env.local` file:
+   ```bash
+   NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+   NEXT_PUBLIC_API_URL=http://localhost:8000
+   ```
+
+   d. **Restart Both Servers**:
+   ```bash
+   # Backend
+   cd backend
+   uv run python manage.py runserver
+
+   # Frontend (new terminal)
+   cd frontend
+   npm run dev
+   ```
+
+   e. **Test Login**:
+   - Open incognito window: `http://localhost:3000/login/login`
+   - Click "Sign in with Google"
+   - Use email added in Google Console test users
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Project Structure
 
 ```
-├── components/          # Reusable UI components
-│   ├── Header.js       # Navigation header
-│   ├── Footer.js       # Site footer
-│   └── AppLayout.js    # Dashboard layout
-├── pages/              # Next.js pages
-│   ├── index.js        # Homepage
-│   ├── _app.js         # App wrapper
-│   ├── _document.js    # HTML document
-│   ├── artisan/        # Artisan pages
-│   ├── buyer/          # Buyer pages
-│   ├── product/        # Product pages
-│   └── admin/          # Admin pages
-├── public/             # Static assets
-├── styles/             # Global styles
-└── tailwind.config.js  # Tailwind configuration
+├── backend/            # Django backend
+│   ├── core/          # User authentication & OAuth
+│   ├── store/         # Marketplace logic
+│   ├── marketplace/   # Django settings
+│   └── OAUTH_SETUP.md # OAuth configuration guide
+├── frontend/          # Next.js frontend
+│   ├── components/    # Reusable UI components
+│   ├── pages/         # Next.js pages
+│   ├── utils/         # Helper functions & API calls
+│   └── styles/        # Global styles
+├── microservices/     # AI services
+└── OAUTH_IMPLEMENTATION_SUMMARY.md # OAuth details
 ```
 
 ## Available Scripts

@@ -29,5 +29,8 @@ urlpatterns = (
         path("login/", views.LoginView.as_view()),
         path("logout/", views.LogoutView.as_view()),
         path("signup/", views.SignupView.as_view()),
+        path('artisan/craft-story/', views.update_craft_story),
+        path('artisan/profile/', views.get_artisan_profile),
+
     ]
 )

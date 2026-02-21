@@ -1,13 +1,16 @@
-import { useState,useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { signup } from '@/utils/auth'
+import { signup, googleOAuthLogin, facebookOAuthLogin } from '@/utils/auth'
 import { useRouter } from "next/router";
+import Script from 'next/script'
 
 export default function Signup() {
 
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const [userRole, setUserRole] = useState("artisan"); // 'artisan' or 'buyer'
+  const [isGoogleLoaded, setIsGoogleLoaded] = useState(false)
+  const [isFacebookLoaded, setIsFacebookLoaded] = useState(false)
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -23,46 +26,107 @@ export default function Signup() {
     bio: "",
     interests: [],
   });
+
   useEffect(() => {
     setIsClient(true);
+
+    // Initialize Facebook SDK
+    window.fbAsyncInit = function () {
+      window.FB.init({
+        appId: 'YOUR_FACEBOOK_APP_ID', // Replace with your Facebook App ID
+        cookie: true,
+        xfbml: true,
+        version: 'v18.0'
+      });
+      setIsFacebookLoaded(true)
+    };
   }, []);
 
-  
+
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
-  
+
+  // Google OAuth Handler
+  const handleGoogleSignup = (response) => {
+    if (response.credential) {
+      googleOAuthLogin(response.credential, userRole).then((result) => {
+        if (result.success) {
+          if (userRole === 'artisan') {
+            router.push('/artisan/onboard')
+          } else {
+            router.push('/buyer/marketplace')
+          }
+        }
+      })
+    }
+  }
+
+  // Facebook OAuth Handler
+  const handleFacebookSignup = () => {
+    if (!window.FB) {
+      alert('Facebook SDK not loaded yet. Please try again.')
+      return
+    }
+
+    window.FB.login((response) => {
+      if (response.authResponse) {
+        facebookOAuthLogin(response.authResponse.accessToken, userRole).then((result) => {
+          if (result.success) {
+            if (userRole === 'artisan') {
+              router.push('/artisan/onboard')
+            } else {
+              router.push('/buyer/marketplace')
+            }
+          }
+        })
+      } else {
+        console.log('User cancelled login or did not fully authorize.')
+      }
+    }, { scope: 'public_profile,email' })
+  }
+
+  useEffect(() => {
+    // Initialize Google Sign-In
+    if (isGoogleLoaded && window.google) {
+      window.google.accounts.id.initialize({
+        client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com', // Replace with your Google Client ID
+        callback: handleGoogleSignup
+      })
+    }
+  }, [isGoogleLoaded, userRole])
+
   //   const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    
-//     try {
+  //     e.preventDefault();
+
+  //     try {
   //       // ✅ Send data to backend API
   //       const res = await fetch("http://localhost:5000/api/signup", {
-    //         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
   //           ...formData,
   //           role: userRole,
   //         }),
   //       });
-  
+
   //       const data = await res.json();
-  
+
   //       if (res.ok) {
-    //         alert("Account created successfully!");
-    
-    const handleSubmit = async (e) => { // 1. Added async here
+  //         alert("Account created successfully!");
+
+  const handleSubmit = async (e) => { // 1. Added async here
     e.preventDefault();
     console.log('Form submitted:', { ...formData, role: userRole });
 
     try {
       // 2. Await the async signup function directly (Removed useEffect)
-      await signup(formData, userRole); 
+      await signup(formData, userRole);
 
       // 3. Redirect based on the role
       if (userRole === "artisan") {
@@ -76,9 +140,9 @@ export default function Signup() {
       alert("Registration failed. Please check if the server is online.");
     }
   };
-  
+
   //as backend is not ready a temporary handleSubmit function
-  
+
 
   const craftOptions = [
     "Pottery & Ceramics",
@@ -92,7 +156,7 @@ export default function Signup() {
     "Bamboo Craft",
     "Other",
   ];
-  
+
   const interestOptions = [
     "Home Decor",
     "Fashion & Accessories",
@@ -103,22 +167,35 @@ export default function Signup() {
     "Furniture",
     "Textiles",
   ];
-  
+
   const handleInterestToggle = (interest) => {
     setFormData((prev) => ({
       ...prev,
       interests: prev.interests.includes(interest)
-      ? prev.interests.filter((i) => i !== interest)
-      : [...prev.interests, interest],
+        ? prev.interests.filter((i) => i !== interest)
+        : [...prev.interests, interest],
     }));
   };
-  
+
   if (!isClient) {
     return null; // Prevents the mismatch by not rendering until client-side
   }
 
   return (
     <>
+      {/* Load Google Sign-In Script */}
+      <Script
+        src="https://accounts.google.com/gsi/client"
+        onLoad={() => setIsGoogleLoaded(true)}
+        strategy="afterInteractive"
+      />
+
+      {/* Load Facebook SDK */}
+      <Script
+        src="https://connect.facebook.net/en_US/sdk.js"
+        strategy="afterInteractive"
+      />
+
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#8b6f47] via-[#c2794d] to-[#8b6f47] z-50"></div>
 
@@ -329,11 +406,10 @@ export default function Signup() {
                         <button
                           type="button"
                           onClick={() => setUserRole("artisan")}
-                          className={`p-4 rounded-xl border-2 transition-all ${
-                            userRole === "artisan"
-                              ? "border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5"
-                              : "border-[#e8dcc8] hover:border-[#c2794d]/50"
-                          }`}
+                          className={`p-4 rounded-xl border-2 transition-all ${userRole === "artisan"
+                            ? "border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5"
+                            : "border-[#e8dcc8] hover:border-[#c2794d]/50"
+                            }`}
                         >
                           <div className="flex flex-col items-center space-y-2">
                             <span className="text-3xl">🎨</span>
@@ -351,11 +427,10 @@ export default function Signup() {
                         <button
                           type="button"
                           onClick={() => setUserRole("buyer")}
-                          className={`p-4 rounded-xl border-2 transition-all ${
-                            userRole === "buyer"
-                              ? "border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5"
-                              : "border-[#e8dcc8] hover:border-[#c2794d]/50"
-                          }`}
+                          className={`p-4 rounded-xl border-2 transition-all ${userRole === "buyer"
+                            ? "border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5"
+                            : "border-[#e8dcc8] hover:border-[#c2794d]/50"
+                            }`}
                         >
                           <div className="flex flex-col items-center space-y-2">
                             <span className="text-3xl">🛍️</span>
@@ -670,11 +745,10 @@ export default function Signup() {
                                 key={interest}
                                 type="button"
                                 onClick={() => handleInterestToggle(interest)}
-                                className={`px-4 py-3 rounded-xl border-2 transition-all text-sm font-medium ${
-                                  formData.interests.includes(interest)
-                                    ? "border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5 text-[#c2794d]"
-                                    : "border-[#e8dcc8] hover:border-[#c2794d]/50 text-[#6d5a3d]"
-                                }`}
+                                className={`px-4 py-3 rounded-xl border-2 transition-all text-sm font-medium ${formData.interests.includes(interest)
+                                  ? "border-[#c2794d] bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5 text-[#c2794d]"
+                                  : "border-[#e8dcc8] hover:border-[#c2794d]/50 text-[#6d5a3d]"
+                                  }`}
                               >
                                 {interest}
                               </button>
@@ -718,6 +792,50 @@ export default function Signup() {
                         ? "Create Artisan Account"
                         : "Create Buyer Account"}
                     </button>
+
+                    {/* Divider */}
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t-2 border-[#f5f0e8]"></div>
+                      </div>
+                      <div className="relative flex justify-center text-sm">
+                        <span className="px-4 bg-white text-[#6d5a3d]/70">or sign up with</span>
+                      </div>
+                    </div>
+
+                    {/* Social Signup */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.google) {
+                            window.google.accounts.id.prompt()
+                          } else {
+                            alert('Google Sign-In is loading. Please wait a moment and try again.')
+                          }
+                        }}
+                        className="flex items-center justify-center space-x-2 px-4 py-3 border-2 border-[#e8dcc8] rounded-xl hover:border-[#c2794d]/50 transition-all bg-[#faf8f5]"
+                      >
+                        <svg className="w-5 h-5" viewBox="0 0 24 24">
+                          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                        </svg>
+                        <span className="text-sm font-medium text-[#6d5a3d]">Google</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleFacebookSignup}
+                        className="flex items-center justify-center space-x-2 px-4 py-3 border-2 border-[#e8dcc8] rounded-xl hover:border-[#c2794d]/50 transition-all bg-[#faf8f5]"
+                      >
+                        <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
+                          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                        </svg>
+                        <span className="text-sm font-medium text-[#6d5a3d]">Facebook</span>
+                      </button>
+                    </div>
                   </form>
                 </div>
 

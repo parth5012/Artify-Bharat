@@ -3,10 +3,10 @@ from django.core.exceptions import ValidationError
 
 
 def validate_file_size(file):
-    max_size_kb = 500
+    max_size_mb = 50  # 50MB limit for images and videos
 
-    if file.size > max_size_kb * 1024:
-        raise ValidationError(f"Files cannot be larger than {max_size_kb}KB!")
+    if file.size > max_size_mb * 1024 * 1024:
+        raise ValidationError(f"Files cannot be larger than {max_size_mb}MB!")
 
 
 def validate_model_extension(file):

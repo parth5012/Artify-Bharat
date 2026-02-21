@@ -2,6 +2,7 @@ import AppLayout from "../../components/AppLayout";
 import { useState, useRef } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { updateCraftStory } from "@/utils/apiCalls";
 
 const translations = {
   english: {
@@ -253,19 +254,36 @@ export default function ArtisanOnboarding() {
       // Start recording
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            sampleRate: 44100,
+          },
         });
-        const mediaRecorder = new MediaRecorder(stream);
+
+        // Use supported MIME type
+        let mimeType = 'audio/webm';
+        if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+          mimeType = 'audio/webm;codecs=opus';
+        } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
+          mimeType = 'audio/ogg;codecs=opus';
+        } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+          mimeType = 'audio/mp4';
+        }
+
+        const mediaRecorder = new MediaRecorder(stream, { mimeType });
         mediaRecorderRef.current = mediaRecorder;
         audioChunksRef.current = [];
 
         mediaRecorder.ondataavailable = (event) => {
-          audioChunksRef.current.push(event.data);
+          if (event.data.size > 0) {
+            audioChunksRef.current.push(event.data);
+          }
         };
 
         mediaRecorder.onstop = () => {
           const audioBlob = new Blob(audioChunksRef.current, {
-            type: "audio/wav",
+            type: mimeType,
           });
           const url = URL.createObjectURL(audioBlob);
           setAudioBlob(audioBlob);
@@ -275,7 +293,7 @@ export default function ArtisanOnboarding() {
           stream.getTracks().forEach((track) => track.stop());
         };
 
-        mediaRecorder.start();
+        mediaRecorder.start(1000); // Collect data every second
         setIsRecording(true);
       } catch (error) {
         console.error("Error accessing microphone:", error);
@@ -311,21 +329,41 @@ export default function ArtisanOnboarding() {
     setIsProcessing(true);
 
     try {
+      console.log("audioBlob:", audioBlob);
+      console.log("audioBlob type:", audioBlob.type);
+      console.log("audioBlob size:", audioBlob.size);
+      console.log("isBlob:", audioBlob instanceof Blob);
+
       // Create FormData and append audio file
       const formData = new FormData();
-      formData.append("file", audioBlob, "recording.wav");
 
-      // Send to backend
+      // Determine file extension based on MIME type
+      let filename = "audio.webm";
+      if (audioBlob.type.includes("ogg")) {
+        filename = "audio.ogg";
+      } else if (audioBlob.type.includes("mp4")) {
+        filename = "audio.mp4";
+      }
+
+      // IMPORTANT: audioBlob must be a Blob or File
+      formData.append("file", audioBlob, filename);
+
+      console.log("Uploading file:", filename);
+
       const response = await axios.post(
-        "http://localhost:8002/process_audio",
+        "http://127.0.0.1:8001/process_audio",
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
-        },
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
-      console.log(response);
-      if (response.status != 200) {
-        throw new Error("Failed to process audio");
+
+      console.log("Response:", response.data);
+
+      if (response.data.error) {
+        throw new Error(response.data.error);
       }
 
       const data = response.data;
@@ -345,19 +383,36 @@ export default function ArtisanOnboarding() {
   };
 
   // Add this NEW FUNCTION after handleNext
-  const handleSaveContinue = () => {
-    // Save data to localStorage
-    const onboardingData = {
-      transcript,
-      story: generatedStory,
-      audioUrl,
-    };
+  const handleSaveContinue = async () => {
+    try {
+      console.log("Saving craft story:", generatedStory);
 
-    localStorage.setItem("artisan_onboarding", JSON.stringify(onboardingData));
+      // Backend mein save karo
+      const response = await updateCraftStory({
+        craft_story: generatedStory,
+        transcript: transcript
+      });
 
-    // Navigate to dashboard
-    router.push("/artisan/dashboard");
+      console.log("Save response:", response);
+
+      // Dashboard pe redirect karo
+      router.push("/artisan/dashboard");
+    } catch (error) {
+      console.error("Failed to save story:", error);
+
+      // Fallback: localStorage mein save kar do
+      const onboardingData = {
+        transcript,
+        story: generatedStory,
+        audioUrl,
+      };
+      localStorage.setItem("artisan_onboarding", JSON.stringify(onboardingData));
+
+      alert("Story saved locally. Redirecting to dashboard...");
+      router.push("/artisan/dashboard");
+    }
   };
+
 
   return (
     <AppLayout currentPage="onboarding">
@@ -411,11 +466,10 @@ export default function ArtisanOnboarding() {
                     <div className="flex flex-col items-center py-12 bg-gradient-to-br from-[#f8f6f3] to-white border-2 border-dashed border-[#c2794d]/40 rounded-2xl">
                       <button
                         onClick={handleRecordToggle}
-                        className={`w-32 h-32 rounded-full flex items-center justify-center transition-all duration-300 ${
-                          isRecording
-                            ? "bg-red-500 shadow-lg shadow-red-500/50 animate-pulse"
-                            : "bg-gradient-to-br from-[#c2794d] to-[#8b6f47] hover:shadow-xl"
-                        }`}
+                        className={`w-32 h-32 rounded-full flex items-center justify-center transition-all duration-300 ${isRecording
+                          ? "bg-red-500 shadow-lg shadow-red-500/50 animate-pulse"
+                          : "bg-gradient-to-br from-[#c2794d] to-[#8b6f47] hover:shadow-xl"
+                          }`}
                       >
                         <span className="text-6xl">
                           {isRecording ? "⏸️" : "🎤"}
@@ -514,6 +568,8 @@ export default function ArtisanOnboarding() {
                       onClick={() => {
                         setCurrentStep(1);
                         handleDeleteRecording();
+                        // Clear localStorage when recording again
+                        localStorage.removeItem("artisan_onboarding");
                       }}
                       className="flex-1 px-6 py-3 text-[#6d5a3d] font-medium border-2 border-[#d4c5b0]/50 rounded-xl hover:bg-[#f8f6f3] transition-colors"
                     >
