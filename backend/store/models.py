@@ -25,7 +25,7 @@ class Product(models.Model):
     slug = models.SlugField(null=True)
     description = models.TextField(null=True, blank=True)
     unit_price = models.DecimalField(
-        max_digits=6, decimal_places=2, validators=[MinValueValidator(1)]
+        max_digits=8, decimal_places=2, validators=[MinValueValidator(1)]
     )
     inventory = models.IntegerField(
         default=1, validators=[MinValueValidator(0)], blank=True, null=True
@@ -39,6 +39,19 @@ class Product(models.Model):
         on_delete=models.CASCADE,
         related_name="products",
         default=1,
+    )
+    # Media fields
+    image = models.ImageField(
+        upload_to="store/products/images",
+        validators=[validate_file_size],
+        null=True,
+        blank=True,
+    )
+    video = models.FileField(
+        upload_to="store/products/videos",
+        validators=[validate_file_size],
+        null=True,
+        blank=True,
     )
 
     def __str__(self) -> str:
@@ -54,11 +67,24 @@ class ProductAsset(models.Model):
     )
     # Image
     image = models.ImageField(
-        upload_to="store/assets/images", validators=[validate_file_size]
+        upload_to="store/assets/images",
+        validators=[validate_file_size],
+        null=True,
+        blank=True,
+    )
+    # Video
+    video = models.FileField(
+        upload_to="store/assets/videos",
+        validators=[validate_file_size],
+        null=True,
+        blank=True,
     )
     # 3D Model
     mesh = models.FileField(
-        upload_to="store/assets/models", validators=[validate_model_extension]
+        upload_to="store/assets/models",
+        validators=[validate_model_extension],
+        null=True,
+        blank=True,
     )
 
 
@@ -83,6 +109,13 @@ class Artisan(models.Model):
     experience = models.IntegerField()
     speciality = models.CharField(max_length=255)
     bio = models.TextField(null=True, blank=True)
+    craft_story = models.TextField(null=True, blank=True)
+    profile_image = models.ImageField(
+        upload_to="artisan/profiles",
+        validators=[validate_file_size],
+        null=True,
+        blank=True,
+    )
     stats = models.JSONField(default=default_stats)
     # orders
 

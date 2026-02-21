@@ -4,9 +4,17 @@ from store.models import Artisan
 
 class IsAdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
+
         if request.method in permissions.SAFE_METHODS:
             return True
-        return bool(request.user and request.user.is_staff)
+
+        user = request.user
+
+        if not user or not user.is_authenticated:
+            return False
+
+        return Artisan.objects.filter(user=user).exists()
+
 
 
 class FullDjangoModelPermissions(permissions.DjangoModelPermissions):
@@ -23,4 +31,11 @@ class IsArtisanOrReadOnly(permissions.BasePermission):
 
 class ViewCustomerHistoryPermission(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.has_perm("store.view_history")
+
+        user = request.user
+
+        if not user or not user.is_authenticated:
+            return False
+
+        return user.has_perm("store.view_history")
+

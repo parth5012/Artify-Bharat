@@ -3,6 +3,7 @@ from django.db import transaction
 from rest_framework import serializers
 from .signals import order_created
 from .models import (
+    Artisan,
     Cart,
     CartItem,
     Customer,
@@ -14,6 +15,53 @@ from .models import (
 )
 
 
+class ArtisanSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+    profile_image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Artisan
+        fields = [
+            "id",
+            "experience",
+            "speciality",
+            "bio",
+            "craft_story",
+            "user",
+            "profile_image_url",
+        ]
+
+    def get_profile_image_url(self, artisan):
+        if artisan.profile_image:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(artisan.profile_image.url)
+            return artisan.profile_image.url
+        return None
+
+    def get_user(self, artisan):
+        user = artisan.user
+        user_data = {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+        }
+
+        # Add address if exists
+        try:
+            address = user.address
+            user_data["address"] = {
+                "city": address.city,
+                "state": address.state,
+                "local_address": address.local_address,
+                "pincode": address.pincode,
+            }
+        except:
+            user_data["address"] = None
+
+        return user_data
+
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -23,13 +71,23 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductAssetSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
     def create(self, validated_data):
         product_id = self.context["product_id"]
         return ProductAsset.objects.create(product_id=product_id, **validated_data)
 
+    def get_image_url(self, asset):
+        if asset.image:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(asset.image.url)
+            return asset.image.url
+        return None
+
     class Meta:
         model = ProductAsset
-        fields = ["id", "image"]
+        fields = ["id", "image", "image_url"]
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -37,6 +95,8 @@ class ProductSerializer(serializers.ModelSerializer):
     artisan = serializers.SerializerMethodField(method_name="get_artisan")
     price = serializers.SerializerMethodField(method_name="get_price")
     category = serializers.SerializerMethodField(method_name="get_category_title")
+    image_url = serializers.SerializerMethodField()
+    video_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -51,6 +111,8 @@ class ProductSerializer(serializers.ModelSerializer):
             "category",
             "images",
             "artisan",
+            "image_url",
+            "video_url",
         ]
 
     def get_category_title(self, product: Product):
@@ -61,6 +123,22 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_artisan(self, product: Product):
         return f"{product.artisan.user.first_name} {product.artisan.user.last_name}"
+
+    def get_image_url(self, product: Product):
+        if product.image:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(product.image.url)
+            return product.image.url
+        return None
+
+    def get_video_url(self, product: Product):
+        if product.video:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(product.video.url)
+            return product.video.url
+        return None
 
 
 class CreateProductSerializer(serializers.ModelSerializer):
@@ -75,6 +153,8 @@ class CreateProductSerializer(serializers.ModelSerializer):
             "category",
             "artisan",
             "inventory",
+            "image",
+            "video",
         ]
 
 

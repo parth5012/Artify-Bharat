@@ -26,6 +26,8 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+
+# from streamlit import user
 from .filters import ProductFilter
 from .permissions import (
     # FullDjangoModelPermissions,
@@ -50,6 +52,7 @@ from .models import (
 )
 from .serializers import (
     AddCartItemSerializer,
+    ArtisanSerializer,
     CartItemSerializer,
     CartSerializer,
     CategorySerializer,
@@ -72,7 +75,7 @@ class ProductViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductFilter
     pagination_class = DefaultPagination
-    permission_classes = [IsArtisanOrReadOnly]
+    permission_classes = [IsAuthenticated, IsArtisanOrReadOnly]
     search_fields = ["title", "description"]
     ordering_fields = ["unit_price", "last_update"]
 
@@ -84,6 +87,16 @@ class ProductViewSet(ModelViewSet):
     def get_serializer_context(self):
         return {"request": self.request}
 
+    def get_queryset(self):
+        """Filter products by current artisan for dashboard view"""
+        queryset = super().get_queryset()
+
+        # If user is artisan, show only their products
+        if hasattr(self.request.user, "artisan"):
+            queryset = queryset.filter(artisan=self.request.user.artisan)
+
+        return queryset
+
     def create(self, request, *args, **kwargs):
         try:
             # Get artisan for current user
@@ -94,14 +107,20 @@ class ProductViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Prepare data for serializer
-        data = (
-            request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
-        )
+        # For multipart/form-data with files, work with request.data directly
+        # Don't copy it as file objects can't be pickled
+        data = request.data
 
         # Map 'price' to 'unit_price' if needed
         if "price" in data and "unit_price" not in data:
-            data["unit_price"] = data.pop("price")
+            # Create a mutable copy only for non-file fields
+            mutable_data = {}
+            for key, value in data.items():
+                if key == "price":
+                    mutable_data["unit_price"] = value
+                else:
+                    mutable_data[key] = value
+            data = mutable_data
 
         # Lookup category
         category_title = data.get("category")
@@ -118,14 +137,26 @@ class ProductViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Create product
-        data["category"] = category.id
-        data["artisan"] = artisan.id
+        # Prepare data for serializer
+        if isinstance(data, dict):
+            data["category"] = category.id
+            data["artisan"] = artisan.id
+        else:
+            # For QueryDict (form data), we need to create a mutable copy
+            data = data.copy()
+            data["category"] = category.id
+            data["artisan"] = artisan.id
 
         # Use CreateProductSerializer for validation and creation
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         product = serializer.save()
+
+        # Handle additional images
+        additional_images = request.FILES.getlist("additional_images")
+        if additional_images:
+            for img in additional_images:
+                ProductAsset.objects.create(product=product, image=img)
 
         # Return response using ProductSerializer for consistent output format
         response_serializer = ProductSerializer(product, context={"request": request})
@@ -248,7 +279,8 @@ class OrderViewSet(ModelViewSet):
         if user.is_staff:
             print("hm")
             return Order.objects.all()
-        elif self.request.query_params.get("role").lower() == "artisan":
+
+        elif self.request.query_params.get("role") == "artisan":
             print(user.artisan.id)
             orders = list(
                 Order.objects.filter(items__product__artisan=user.artisan)
@@ -323,10 +355,11 @@ class SignupView(APIView):
                 artisan.user_id = user.id
                 artisan.save()
             elif userRole == "buyer":
-                customer = Customer()
-                customer.user = user
-                customer.interests = list(request.data.get("interests"))
+                customer, created = Customer.objects.get_or_create(user=user)
+
+                customer.interests = request.data.get("interests", [])
                 customer.save()
+
             else:
                 return ValidationError("Client Side Error!!")
         refresh = RefreshToken.for_user(user)
@@ -378,3 +411,55 @@ def get_dashboard_stats(request):
         print(stats, change)
         return Response({"stats": stats, "change": change})
     return Response("You are not an Artisan!")
+
+
+@api_view(["PATCH"])
+def update_craft_story(request):
+    try:
+        artisan = request.user.artisan
+        artisan.craft_story = request.data.get("craft_story")
+        artisan.save()
+        return Response({"success": True})
+    except Artisan.DoesNotExist:
+        return Response(
+            {"error": "User is not an artisan"}, status=status.HTTP_400_BAD_REQUEST
+        )
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["GET", "PATCH"])
+def get_artisan_profile(request):
+    try:
+        artisan = request.user.artisan
+
+        if request.method == "GET":
+            serializer = ArtisanSerializer(artisan, context={"request": request})
+            return Response(serializer.data)
+
+        elif request.method == "PATCH":
+            # Update artisan profile
+            data = request.data
+
+            if "speciality" in data:
+                artisan.speciality = data["speciality"]
+            if "experience" in data:
+                artisan.experience = data["experience"]
+            if "bio" in data:
+                artisan.bio = data["bio"]
+            if "craft_story" in data:
+                artisan.craft_story = data["craft_story"]
+            if "profile_image" in request.FILES:
+                artisan.profile_image = request.FILES["profile_image"]
+
+            artisan.save()
+
+            serializer = ArtisanSerializer(artisan, context={"request": request})
+            return Response(serializer.data)
+
+    except Artisan.DoesNotExist:
+        return Response(
+            {"error": "User is not an artisan"}, status=status.HTTP_400_BAD_REQUEST
+        )
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
