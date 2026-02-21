@@ -82,7 +82,9 @@ class ProductViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductFilter
     pagination_class = DefaultPagination
-    permission_classes = [IsAuthenticated, IsArtisanOrReadOnly]
+    permission_classes = [
+        IsArtisanOrReadOnly
+    ]  # Allows public read access, artisan-only write
     search_fields = ["title", "description"]
     ordering_fields = ["unit_price", "last_update"]
 
@@ -98,9 +100,21 @@ class ProductViewSet(ModelViewSet):
         """Filter products by current artisan for dashboard view"""
         queryset = super().get_queryset()
 
-        # If user is artisan, show only their products
-        if hasattr(self.request.user, "artisan"):
+        # Only filter by artisan if:
+        # 1. User is authenticated
+        # 2. User has artisan profile
+        # 3. my_products=true query param is explicitly set
+        if (
+            self.request.user.is_authenticated
+            and hasattr(self.request.user, "artisan")
+            and self.request.query_params.get("my_products") == "true"
+        ):
+            print(f"🔒 Filtering products for artisan: {self.request.user.email}")
             queryset = queryset.filter(artisan=self.request.user.artisan)
+        else:
+            print(
+                f"🌍 Showing ALL products (user: {self.request.user.email if self.request.user.is_authenticated else 'Anonymous'})"
+            )
 
         return queryset
 
