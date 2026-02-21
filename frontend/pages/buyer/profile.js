@@ -36,22 +36,29 @@ export default function BuyerProfile() {
     }, [welcome])
 
     const loadProfile = async () => {
-        // TODO: Fetch from API
-        const userData = {
-            firstName: localStorage.getItem('user_first_name') || '',
-            lastName: localStorage.getItem('user_last_name') || '',
-            email: localStorage.getItem('user_email') || '',
-            phone: '',
-            profileImage: null,
-            address: {
-                street: '',
-                city: '',
-                state: '',
-                pincode: '',
-                landmark: ''
+        // Load from localStorage first
+        const savedProfile = localStorage.getItem('buyer_profile')
+
+        if (savedProfile) {
+            setProfile(JSON.parse(savedProfile))
+        } else {
+            // Fallback to basic user data
+            const userData = {
+                firstName: localStorage.getItem('user_first_name') || '',
+                lastName: localStorage.getItem('user_last_name') || '',
+                email: localStorage.getItem('user_email') || '',
+                phone: '',
+                profileImage: null,
+                address: {
+                    street: '',
+                    city: '',
+                    state: '',
+                    pincode: '',
+                    landmark: ''
+                }
             }
+            setProfile(userData)
         }
-        setProfile(userData)
     }
 
     const handleInputChange = (e) => {
@@ -81,8 +88,25 @@ export default function BuyerProfile() {
     const handleSave = async () => {
         // TODO: Save to API
         console.log('Saving profile:', profile)
+
+        // Save to localStorage for now (replace with API call later)
+        localStorage.setItem('buyer_profile', JSON.stringify(profile))
+
         setIsEditing(false)
+        setShowWelcome(false)
         alert('Profile updated successfully!')
+    }
+
+    const isProfileComplete = () => {
+        return (
+            profile.firstName &&
+            profile.lastName &&
+            profile.phone &&
+            profile.address.street &&
+            profile.address.city &&
+            profile.address.state &&
+            profile.address.pincode
+        )
     }
 
     const handleLogout = () => {
@@ -96,6 +120,26 @@ export default function BuyerProfile() {
                 <div className="max-w-4xl mx-auto">
                     {/* Header */}
                     <div className="mb-8">
+                        {showWelcome && (
+                            <div className="mb-6 p-6 bg-gradient-to-r from-[#c2794d]/10 to-[#8b6f47]/10 border-2 border-[#c2794d]/30 rounded-xl">
+                                <h2 className="text-xl font-bold text-[#3d3021] mb-2">🎉 Welcome to Artify Bharat!</h2>
+                                <p className="text-[#6d5a3d] mb-4">Complete your profile to get personalized recommendations and faster checkout.</p>
+                                {isProfileComplete() && (
+                                    <button
+                                        onClick={() => router.push('/buyer/marketplace')}
+                                        className="px-6 py-3 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center space-x-2"
+                                    >
+                                        <span>🛍️</span>
+                                        <span>Browse Products</span>
+                                    </button>
+                                )}
+                                {!isProfileComplete() && (
+                                    <p className="text-sm text-[#6d5a3d] italic">
+                                        ℹ️ Please fill all required fields to start browsing
+                                    </p>
+                                )}
+                            </div>
+                        )}
                         <h1 className="text-3xl font-bold text-[#3d3021] mb-2">My Profile</h1>
                         <p className="text-[#6d5a3d]">Manage your account and delivery preferences</p>
                     </div>
@@ -281,14 +325,24 @@ export default function BuyerProfile() {
                                     </div>
                                 </div>
 
-                                {/* Logout Button */}
+                                {/* Action Buttons */}
                                 <div className="pt-6 border-t-2 border-[#d4c5b0]/40">
-                                    <button
-                                        onClick={handleLogout}
-                                        className="w-full md:w-auto px-8 py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all"
-                                    >
-                                        🚪 Logout
-                                    </button>
+                                    <div className="flex flex-col sm:flex-row gap-4">
+                                        <button
+                                            onClick={() => router.push('/buyer/marketplace')}
+                                            className="flex-1 px-8 py-3 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center justify-center space-x-2"
+                                        >
+                                            <span>🛍️</span>
+                                            <span>Browse Products</span>
+                                        </button>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="px-8 py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all flex items-center justify-center space-x-2"
+                                        >
+                                            <span>🚪</span>
+                                            <span>Logout</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -1,47 +1,43 @@
 import api from "./axiosConfig";
 
-export async function getProductsList() {
+export async function getProductsList(myProductsOnly = false, page = 1) {
     try {
-        const response = await api.get('store/products/');
+        const params = myProductsOnly ? { my_products: 'true', page } : { page };
+        const response = await api.get('store/products/', { params });
 
         console.log("Products API Response:", response.data);
 
-        // Check for successful status and ensure data.results exists
+        // Check for successful status
         if (response.status === 200) {
-            // Handle both paginated (results) and non-paginated responses
-            const products = response.data.results || response.data;
-
-            if (Array.isArray(products)) {
-                console.log("Products fetched:", products.length);
-                return products;
-            }
+            // Return the full response with pagination data
+            return response.data;
         }
 
-        // If results isn't an array, return an empty array to prevent .filter() crashes
-        return [];
+        // If no data, return empty structure
+        return { results: [], count: 0, next: null, previous: null };
     } catch (error) {
         // Log the specific error (like ECONNREFUSED) for debugging
         console.error("API Call Failed:", error.message);
         console.error("Full error:", error);
 
-        // Always return an array so the frontend doesn't break
-        return [];
+        // Always return a structure so the frontend doesn't break
+        return { results: [], count: 0, next: null, previous: null };
     }
 }
 // getProductsList();
 
 export async function getDashboardStats() {
-  const response = await api.get("store/stats/");
-  return {
-    stats: response.data["stats"],
-    change: response.data["change"],
-  };
+    const response = await api.get("store/stats/");
+    return {
+        stats: response.data["stats"],
+        change: response.data["change"],
+    };
 }
 
 export async function getOrders() {
-  const response = await api.get("store/orders/");
-  console.log(response.data);
-  return response.data;
+    const response = await api.get("store/orders/");
+    console.log(response.data);
+    return response.data;
 }
 
 export async function createProduct(formData) {

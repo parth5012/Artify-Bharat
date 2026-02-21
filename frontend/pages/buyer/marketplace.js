@@ -11,16 +11,26 @@ export default function MarketplaceWeb() {
 
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
 
   useEffect(() => {
-    const loadProducts = async () => {
-      setLoading(true)
-      const data = await getProductsList()
-      setProducts(data || []) // Fallback to empty array
-      setLoading(false)
-    }
-    loadProducts()
-  }, [])
+    loadProducts(currentPage)
+  }, [currentPage])
+
+  const loadProducts = async (page = 1) => {
+    setLoading(true)
+    console.log(`🔄 Marketplace: Loading page ${page}...`)
+    const data = await getProductsList(false, page) // Pass page number
+    console.log('✅ Marketplace: Products loaded:', data?.results?.length || 0)
+    console.log('📦 Total products:', data?.count || 0)
+
+    setProducts(data?.results || [])
+    setTotalCount(data?.count || 0)
+    setTotalPages(Math.ceil((data?.count || 0) / 10)) // 10 items per page
+    setLoading(false)
+  }
   const categories = [
     { id: 'all', title: 'All', icon: '🎨' },
     { id: 'pottery', title: 'Pottery', icon: '🏺' },
@@ -52,9 +62,22 @@ export default function MarketplaceWeb() {
       <div className="min-h-screen p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
           {/* Page Header */}
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-[#3d3021] mb-2 font-display">Marketplace</h2>
-            <p className="text-[#6d5a3d]">Discover authentic handmade crafts from Indian artisans</p>
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h2 className="text-3xl font-bold text-[#3d3021] mb-2 font-display">Marketplace</h2>
+              <p className="text-[#6d5a3d]">Discover authentic handmade crafts from Indian artisans</p>
+            </div>
+            <button
+              onClick={() => {
+                setCurrentPage(1);
+                loadProducts(1);
+              }}
+              disabled={loading}
+              className="px-6 py-3 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-xl hover:shadow-lg transition-all disabled:opacity-50 flex items-center space-x-2"
+            >
+              <span>{loading ? '⏳' : '🔄'}</span>
+              <span>{loading ? 'Loading...' : 'Refresh'}</span>
+            </button>
           </div>
 
           {/* Category Chips */}
@@ -79,7 +102,8 @@ export default function MarketplaceWeb() {
             <div className="w-full">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <p className="text-[#6d5a3d]">
-                  <span className="font-semibold text-[#3d3021]">{filteredProducts.length}</span> products found
+                  <span className="font-semibold text-[#3d3021]">{totalCount}</span> products found
+                  {totalCount > 0 && ` (Page ${currentPage} of ${totalPages})`}
                 </p>
                 <select className="px-4 py-2 bg-white border-2 border-[#d4c5b0]/50 rounded-lg text-sm focus:outline-none focus:border-[#c2794d]">
                   <option>Most Relevant</option>
@@ -153,21 +177,46 @@ export default function MarketplaceWeb() {
               {/* Pagination */}
               <div className="mt-8 flex justify-center">
                 <div className="flex items-center space-x-2">
-                  <button className="px-4 py-2 bg-white border-2 border-[#d4c5b0]/50 text-[#6d5a3d] font-medium rounded-lg hover:border-[#c2794d] transition-colors">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 bg-white border-2 border-[#d4c5b0]/50 text-[#6d5a3d] font-medium rounded-lg hover:border-[#c2794d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
                     Previous
                   </button>
-                  {[1, 2, 3].map(page => (
-                    <button
-                      key={page}
-                      className={`w-10 h-10 rounded-lg font-semibold transition-colors ${page === 1
-                        ? 'bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white'
-                        : 'bg-white border-2 border-[#d4c5b0]/50 text-[#6d5a3d] hover:border-[#c2794d]'
-                        }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                  <button className="px-4 py-2 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-lg shadow-sm">
+
+                  {/* Page numbers */}
+                  {[...Array(Math.min(5, totalPages))].map((_, idx) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = idx + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = idx + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + idx;
+                    } else {
+                      pageNum = currentPage - 2 + idx;
+                    }
+
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`w-10 h-10 rounded-lg font-semibold transition-colors ${currentPage === pageNum
+                          ? 'bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white'
+                          : 'bg-white border-2 border-[#d4c5b0]/50 text-[#6d5a3d] hover:border-[#c2794d]'
+                          }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-lg shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
                     Next
                   </button>
                 </div>

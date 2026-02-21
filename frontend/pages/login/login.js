@@ -43,8 +43,13 @@ export default function Login() {
       const result = await login(formData);
 
       if (result.success) {
-        // Redirect to dashboard (you can make this dynamic based on user role)
-        router.push('/artisan/dashboard');
+        // Redirect based on user role
+        const role = localStorage.getItem('user_role')
+        if (role === 'artisan') {
+          router.push('/artisan/dashboard');
+        } else {
+          router.push('/buyer/marketplace');
+        }
       }
     } catch (error) {
       console.error('Login error:', error);

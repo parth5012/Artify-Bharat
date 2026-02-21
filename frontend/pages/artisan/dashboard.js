@@ -52,8 +52,9 @@ function DashboardContent() {
       if (success) {
         alert("Product deleted successfully!");
         // Refresh products list
-        const productsList = await getProductsList();
-        setProducts(productsList || []);
+        const response = await getProductsList(true); // Only fetch artisan's own products
+        const productsList = response?.results || response || [];
+        setProducts(productsList);
       }
     }
   };
@@ -81,7 +82,8 @@ function DashboardContent() {
     const fetchProducts = async () => {
       try {
         console.log("🔄 Fetching products...");
-        const productsList = await getProductsList();
+        const response = await getProductsList(true); // Only fetch artisan's own products
+        const productsList = response?.results || response || [];
         console.log("✅ Products fetched:", productsList);
         console.log("📊 Products count:", productsList?.length || 0);
 
@@ -92,7 +94,7 @@ function DashboardContent() {
           });
         }
 
-        setProducts(productsList || []);
+        setProducts(productsList);
       } catch (error) {
         console.error("❌ Failed to fetch products:", error);
       }
@@ -462,14 +464,15 @@ function DashboardContent() {
             onProductAdded={async () => {
               console.log("🔄 Refreshing products after add...");
               // Refresh products list
-              const productsList = await getProductsList();
+              const response = await getProductsList(true); // Only fetch artisan's own products
+              const productsList = response?.results || response || [];
               console.log("✅ Products refreshed:", productsList);
               console.log("📊 New products count:", productsList?.length || 0);
 
               // Force state update
               setProducts([]);
               setTimeout(() => {
-                setProducts(productsList || []);
+                setProducts(productsList);
               }, 100);
             }}
           />
