@@ -245,6 +245,45 @@ artify-bharat/
 - API Keys:
   - [Google AI Studio](https://aistudio.google.com/) → `GOOGLE_API_KEY`
   - [AssemblyAI](https://www.assemblyai.com/) → `ASSEMBLYAI_API_KEY`
+  - [Google Cloud Console](https://console.cloud.google.com/) → OAuth 2.0 Client ID for Google Login
+
+---
+
+### Google OAuth Setup
+
+To enable Google login, you need to configure OAuth 2.0 credentials:
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Navigate to **APIs & Services** → **Credentials**
+4. Click **Create Credentials** → **OAuth 2.0 Client ID**
+5. Configure the OAuth consent screen if prompted
+6. For **Application type**, select **Web application**
+7. Add **Authorized JavaScript origins**:
+   - `http://localhost:3000` (for development)
+   - Your production domain (e.g., `https://yourdomain.com`)
+8. Add **Authorized redirect URIs**:
+   - `http://localhost:3000` (for development)
+   - Your production domain
+9. Copy the **Client ID** and save it
+
+**Add to environment variables:**
+
+Backend (`backend/.env`):
+```env
+GOOGLE_CLIENT_ID=your_google_client_id_here.apps.googleusercontent.com
+```
+
+Frontend (`frontend/.env.local`):
+```env
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id_here.apps.googleusercontent.com
+```
+
+**Required Python packages** (already in `pyproject.toml`):
+```bash
+cd backend
+uv add google-auth google-auth-oauthlib python-dotenv
+```
 
 ---
 
