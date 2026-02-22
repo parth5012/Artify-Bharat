@@ -1,11 +1,15 @@
 import AppLayout from '../../components/AppLayout'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { getProductsList } from '@/utils/apiCalls'
 
 
 
 export default function MarketplaceWeb() {
+  const router = useRouter()
+  const { artisan_id: artisanIdFilter, artisan_name: artisanNameFilter } = router.query
+
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [priceRange, setPriceRange] = useState([0, 5000])
 
@@ -16,13 +20,17 @@ export default function MarketplaceWeb() {
   const [totalCount, setTotalCount] = useState(0)
 
   useEffect(() => {
-    loadProducts(currentPage)
-  }, [currentPage])
+    // Only load products when router is ready
+    if (router.isReady) {
+      loadProducts(currentPage)
+    }
+  }, [currentPage, artisanIdFilter, router.isReady]) // Add router.isReady dependency
 
   const loadProducts = async (page = 1) => {
     setLoading(true)
     console.log(`🔄 Marketplace: Loading page ${page}...`)
-    const data = await getProductsList(false, page) // Pass page number
+    console.log(`🔍 Artisan ID Filter: ${artisanIdFilter}`)
+    const data = await getProductsList(false, page, artisanIdFilter) // Pass artisan ID filter
     console.log('✅ Marketplace: Products loaded:', data?.results?.length || 0)
     console.log('📦 Total products:', data?.count || 0)
 
@@ -65,7 +73,20 @@ export default function MarketplaceWeb() {
           <div className="mb-8 flex items-center justify-between">
             <div>
               <h2 className="text-3xl font-bold text-[#3d3021] mb-2 font-display">Marketplace</h2>
-              <p className="text-[#6d5a3d]">Discover authentic handmade crafts from Indian artisans</p>
+              <p className="text-[#6d5a3d]">
+                {artisanNameFilter
+                  ? `Products by ${artisanNameFilter}`
+                  : 'Discover authentic handmade crafts from Indian artisans'}
+              </p>
+              {artisanIdFilter && (
+                <button
+                  onClick={() => router.push('/buyer/marketplace')}
+                  className="mt-2 text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1"
+                >
+                  <span>←</span>
+                  <span>View all artisans</span>
+                </button>
+              )}
             </div>
             <button
               onClick={() => {

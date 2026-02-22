@@ -12,6 +12,7 @@ export default function ProductPassport() {
   const [isZoomed, setIsZoomed] = useState(false)
   const [is360Mode, setIs360Mode] = useState(false)
   const [dragStart, setDragStart] = useState(null)
+  const [showArtisanProfile, setShowArtisanProfile] = useState(false)
   const imageRef = useRef(null)
 
   useEffect(() => {
@@ -294,6 +295,15 @@ export default function ProductPassport() {
                     ❤️
                   </button>
                 </div>
+
+                {/* See Who Made It Button */}
+                <button
+                  onClick={() => setShowArtisanProfile(true)}
+                  className="w-full mt-4 py-3 bg-amber-50 border-2 border-amber-200 text-[#3d3021] font-semibold rounded-xl hover:bg-amber-100 transition-all duration-300 flex items-center justify-center space-x-2"
+                >
+                  <span>👤</span>
+                  <span>See Who Made It</span>
+                </button>
               </div>
 
               {/* Recommended */}
@@ -344,6 +354,132 @@ export default function ProductPassport() {
           </div>
         </div>
       </div>
+
+      {/* Artisan Profile Modal */}
+      {showArtisanProfile && (
+        <ArtisanProfileModal
+          product={product}
+          onClose={() => setShowArtisanProfile(false)}
+        />
+      )}
     </AppLayout>
   )
+}
+
+/* Artisan Profile Modal Component */
+function ArtisanProfileModal({ product, onClose }) {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-white rounded-2xl max-w-2xl w-full p-6 my-8 max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex justify-between items-start mb-6">
+          <h2 className="text-2xl font-bold text-[#3d3021]">Meet the Artisan</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 text-3xl leading-none"
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Artisan Profile */}
+        <div className="space-y-6">
+          {/* Profile Header */}
+          <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#c2794d] to-[#8b6f47] flex items-center justify-center text-white text-3xl font-bold">
+              {product.artisan?.charAt(0) || 'A'}
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-[#3d3021]">{product.artisan || 'Artisan Name'}</h3>
+              <p className="text-sm text-[#6d5a3d]">{product.category} Specialist</p>
+              <div className="flex items-center space-x-2 mt-1">
+                <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">✓ Verified</span>
+                <span className="text-xs text-[#6d5a3d]">📍 India</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Craft Story */}
+          <div className="p-4 bg-[#f8f6f3] rounded-xl border-2 border-[#d4c5b0]/50">
+            <h4 className="text-sm font-bold text-[#3d3021] mb-2 flex items-center space-x-2">
+              <span>✨</span>
+              <span>Craft Story</span>
+            </h4>
+            <p className="text-sm text-[#6d5a3d] leading-relaxed">
+              This beautiful handcrafted pottery represents generations of traditional craftsmanship passed down from my grandmother. Each piece is carefully shaped using ancient techniques that have been preserved in our family for over 100 years.
+            </p>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center p-4 bg-blue-50 rounded-xl">
+              <div className="text-2xl font-bold text-blue-600">15+</div>
+              <div className="text-xs text-[#6d5a3d]">Years Experience</div>
+            </div>
+            <div className="text-center p-4 bg-green-50 rounded-xl">
+              <div className="text-2xl font-bold text-green-600">127</div>
+              <div className="text-xs text-[#6d5a3d]">Products</div>
+            </div>
+            <div className="text-center p-4 bg-purple-50 rounded-xl">
+              <div className="text-2xl font-bold text-purple-600">4.8★</div>
+              <div className="text-xs text-[#6d5a3d]">Rating</div>
+            </div>
+          </div>
+
+          {/* Skills & Specialties */}
+          <div>
+            <h4 className="text-sm font-bold text-[#3d3021] mb-3">Skills & Specialties</h4>
+            <div className="flex flex-wrap gap-2">
+              <span className="px-3 py-1 bg-[#c2794d]/10 text-[#c2794d] text-sm rounded-full">Traditional Pottery</span>
+              <span className="px-3 py-1 bg-[#c2794d]/10 text-[#c2794d] text-sm rounded-full">Hand-thrown</span>
+              <span className="px-3 py-1 bg-[#c2794d]/10 text-[#c2794d] text-sm rounded-full">Terracotta</span>
+              <span className="px-3 py-1 bg-[#c2794d]/10 text-[#c2794d] text-sm rounded-full">Glazing</span>
+            </div>
+          </div>
+
+          {/* Location */}
+          <div className="p-4 bg-amber-50 rounded-xl border-2 border-amber-200">
+            <h4 className="text-sm font-bold text-[#3d3021] mb-2">📍 Location</h4>
+            <p className="text-sm text-[#6d5a3d]">Dharavi Village, Gujarat, India</p>
+          </div>
+
+          {/* Read-only Notice */}
+          <div className="p-3 bg-blue-50 border-2 border-blue-200 rounded-xl text-center">
+            <p className="text-xs text-blue-700">
+              ℹ️ This is a view-only profile. You can browse the artisan's products in the marketplace.
+            </p>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            <button
+              onClick={() => {
+                onClose();
+                // Navigate to marketplace with artisan ID filter
+                window.location.href = `/buyer/marketplace?artisan_id=${product.artisan_id}&artisan_name=${encodeURIComponent(product.artisan)}`;
+              }}
+              className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-lg transition-all font-medium flex items-center justify-center space-x-2"
+            >
+              <span>🛍️</span>
+              <span>Browse More Products</span>
+            </button>
+
+            <button
+              onClick={onClose}
+              className="flex-1 py-3 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white rounded-xl hover:shadow-lg transition-all font-medium"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

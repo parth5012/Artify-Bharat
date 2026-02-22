@@ -554,6 +554,12 @@ function AddProductModal({ onClose, onProductAdded }) {
   const [videoPreview, setVideoPreview] = useState(null);
   const [additionalImagePreviews, setAdditionalImagePreviews] = useState([]);
 
+  // Voice recording states
+  const [isRecording, setIsRecording] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [audioChunks, setAudioChunks] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+
   // Disable body scroll when modal is open
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -561,6 +567,67 @@ function AddProductModal({ onClose, onProductAdded }) {
       document.body.style.overflow = 'unset';
     };
   }, []);
+
+  // Voice recording functions
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks = [];
+
+      recorder.ondataavailable = (e) => {
+        chunks.push(e.data);
+      };
+
+      recorder.onstop = async () => {
+        const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+        await processAudioDescription(audioBlob);
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      recorder.start();
+      setMediaRecorder(recorder);
+      setAudioChunks(chunks);
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+      alert('Could not access microphone. Please check permissions.');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorder && isRecording) {
+      mediaRecorder.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const processAudioDescription = async (audioBlob) => {
+    setIsProcessing(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', audioBlob, 'description.webm');
+
+      const response = await fetch('http://localhost:8001/process_product_description', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.description) {
+        setFormData(prev => ({ ...prev, description: data.description }));
+        alert('Description generated successfully!');
+      } else {
+        alert('Failed to generate description. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error processing audio:', error);
+      alert('Failed to process audio. Make sure microservices are running.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const handleFileChange = (e, type) => {
     const file = e.target.files[0];
@@ -664,16 +731,54 @@ function AddProductModal({ onClose, onProductAdded }) {
             required
           />
 
-          <textarea
-            className="w-full p-3 border rounded-xl"
-            placeholder="Description"
-            rows="3"
-            value={formData.description}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
-            }
-            required
-          />
+          <div>
+            <label className="block text-sm font-medium text-[#3d3021] mb-2">
+              Product Description
+            </label>
+            <textarea
+              className="w-full p-3 border rounded-xl"
+              placeholder="Description"
+              rows="3"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              required
+            />
+
+            {/* Voice Recording Button */}
+            <div className="mt-2 flex items-center gap-2">
+              {!isRecording && !isProcessing && (
+                <button
+                  type="button"
+                  onClick={startRecording}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                >
+                  🎤 Record Description
+                </button>
+              )}
+
+              {isRecording && (
+                <button
+                  type="button"
+                  onClick={stopRecording}
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2 animate-pulse"
+                >
+                  ⏹️ Stop Recording
+                </button>
+              )}
+
+              {isProcessing && (
+                <div className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg flex items-center gap-2">
+                  ⏳ Processing...
+                </div>
+              )}
+
+              <span className="text-xs text-gray-500">
+                {isRecording ? 'Recording... Speak in your language' : 'Or type manually'}
+              </span>
+            </div>
+          </div>
 
           <div className="grid grid-cols-2 gap-4">
             <input

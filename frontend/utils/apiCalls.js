@@ -1,8 +1,19 @@
 import api from "./axiosConfig";
 
-export async function getProductsList(myProductsOnly = false, page = 1) {
+export async function getProductsList(myProductsOnly = false, page = 1, artisanId = null) {
     try {
-        const params = myProductsOnly ? { my_products: 'true', page } : { page };
+        const params = { page };
+
+        if (myProductsOnly) {
+            params.my_products = 'true';
+        }
+
+        if (artisanId) {
+            params.artisan_id = artisanId;
+            console.log('🔍 Adding artisan_id to params:', artisanId);
+        }
+
+        console.log('📡 API Request params:', params);
         const response = await api.get('store/products/', { params });
 
         console.log("Products API Response:", response.data);
