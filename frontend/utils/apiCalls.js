@@ -1,6 +1,6 @@
 import api from "./axiosConfig";
 
-export async function getProductsList(myProductsOnly = false, page = 1, artisanId = null) {
+export async function getProductsList(myProductsOnly = false, page = 1, artisanId = null, filters = {}) {
     try {
         const params = { page };
 
@@ -11,6 +11,27 @@ export async function getProductsList(myProductsOnly = false, page = 1, artisanI
         if (artisanId) {
             params.artisan_id = artisanId;
             console.log('🔍 Adding artisan_id to params:', artisanId);
+        }
+
+        // Add marketplace filters
+        if (filters.category) {
+            params.category = filters.category;
+        }
+
+        if (filters.ordering) {
+            params.ordering = filters.ordering;
+        }
+
+        if (filters.search) {
+            params.search = filters.search;
+        }
+
+        if (filters.min_price) {
+            params.min_price = filters.min_price;
+        }
+
+        if (filters.max_price) {
+            params.max_price = filters.max_price;
         }
 
         console.log('📡 API Request params:', params);
@@ -130,6 +151,88 @@ export async function getProductDetail(productId) {
         return null;
     } catch (error) {
         console.error("Get product detail error:", error.message);
+        return null;
+    }
+}
+
+export async function getCategories() {
+    try {
+        const response = await api.get('store/categories/');
+        console.log("Categories response:", response.data);
+
+        if (response.status === 200) {
+            return response.data;
+        }
+        return [];
+    } catch (error) {
+        console.error("Get categories error:", error.message);
+        return [];
+    }
+}
+
+// Verification API functions
+export async function submitVerification(formData) {
+    try {
+        console.log("Submitting verification data:", formData);
+
+        const response = await api.post('store/verification/', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        });
+
+        console.log("Verification submission response:", response.data);
+
+        if (response.status === 201 || response.status === 200) {
+            return response.data;
+        }
+
+        throw new Error('Failed to submit verification');
+
+    } catch (error) {
+        console.error("Submit verification error:", error);
+
+        if (error.response) {
+            console.error("Status:", error.response.status);
+            console.error("Error Data:", error.response.data);
+
+            // Throw with specific error message
+            throw new Error(error.response.data.error || 'Verification submission failed');
+        } else {
+            console.error("Network error:", error.message);
+            throw new Error("Network error. Please check if backend is running.");
+        }
+    }
+}
+
+export async function getVerificationStatus() {
+    try {
+        const response = await api.get('store/artisan/verification-status/');
+        console.log("Verification status response:", response.data);
+
+        if (response.status === 200) {
+            return response.data;
+        }
+
+        return { has_verification: false, status: null };
+    } catch (error) {
+        console.error("Get verification status error:", error.message);
+        return { has_verification: false, status: null };
+    }
+}
+
+export async function getVerificationDetails() {
+    try {
+        const response = await api.get('store/verification/');
+        console.log("Verification details response:", response.data);
+
+        if (response.status === 200 && response.data.results && response.data.results.length > 0) {
+            return response.data.results[0]; // Return the first (and should be only) verification
+        }
+
+        return null;
+    } catch (error) {
+        console.error("Get verification details error:", error.message);
         return null;
     }
 }

@@ -45,6 +45,7 @@ from .pagination import DefaultPagination
 from .models import (
     Address,
     Artisan,
+    ArtisanVerification,
     Cart,
     CartItem,
     Category,
@@ -59,9 +60,11 @@ from .models import (
 from .serializers import (
     AddCartItemSerializer,
     ArtisanSerializer,
+    ArtisanVerificationSerializer,
     CartItemSerializer,
     CartSerializer,
     CategorySerializer,
+    CreateArtisanVerificationSerializer,
     CreateOrderSerializer,
     CreateProductSerializer,
     # CreateUserSerializer,
@@ -505,3 +508,94 @@ def get_artisan_profile(request):
         )
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ArtisanVerificationViewSet(ModelViewSet):
+    serializer_class = ArtisanVerificationSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        # Only return verification for the current user's artisan profile
+        if hasattr(self.request.user, 'artisan'):
+            return ArtisanVerification.objects.filter(artisan=self.request.user.artisan)
+        return ArtisanVerification.objects.none()
+    
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return CreateArtisanVerificationSerializer
+        return ArtisanVerificationSerializer
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            artisan = request.user.artisan
+        except Artisan.DoesNotExist:
+            return Response(
+                {"error": "User is not registered as an artisan."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        # Check if verification already exists
+        if ArtisanVerification.objects.filter(artisan=artisan).exists():
+            return Response(
+                {"error": "Verification already submitted for this artisan."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # Save with artisan relationship
+        verification = serializer.save(artisan=artisan)
+        
+        # Return response using full serializer
+        response_serializer = ArtisanVerificationSerializer(
+            verification, 
+            context={'request': request}
+        )
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+    
+    @action(detail=False, methods=['GET'])
+    def status(self, request):
+        """Get verification status for current artisan"""
+        try:
+            artisan = request.user.artisan
+            verification = ArtisanVerification.objects.get(artisan=artisan)
+            return Response({
+                'has_verification': True,
+                'status': verification.verification_status,
+                'submitted_at': verification.submitted_at,
+                'reviewed_at': verification.reviewed_at,
+            })
+        except Artisan.DoesNotExist:
+            return Response(
+                {"error": "User is not an artisan"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except ArtisanVerification.DoesNotExist:
+            return Response({
+                'has_verification': False,
+                'status': None,
+            })
+
+
+@api_view(['GET'])
+def get_verification_status(request):
+    """Simple endpoint to check if user has submitted verification"""
+    try:
+        artisan = request.user.artisan
+        verification = ArtisanVerification.objects.get(artisan=artisan)
+        return Response({
+            'has_verification': True,
+            'status': verification.verification_status,
+            'submitted_at': verification.submitted_at,
+        })
+    except Artisan.DoesNotExist:
+        return Response(
+            {"error": "User is not an artisan"}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    except ArtisanVerification.DoesNotExist:
+        return Response({
+            'has_verification': False,
+            'status': None,
+        })

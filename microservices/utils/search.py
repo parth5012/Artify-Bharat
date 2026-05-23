@@ -19,7 +19,7 @@ def get_index():
 
 def index_product_names(token):
     try:
-        response = requests.get("http://localhost:8000/store/products/names/",headers={
+        response = requests.get("http://localhost:8002/store/products/names/",headers={
             'Authorization': f'Bearer {token}'
         })
         if response.status_code == 200:

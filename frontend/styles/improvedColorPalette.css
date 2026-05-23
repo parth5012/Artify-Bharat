@@ -1,0 +1,146 @@
+/* IMPROVED COLOR PALETTE FOR ARTIFY BHARAT */
+/* Replace bright neon greens with organic, premium alternatives */
+
+/* Original problematic neon green classes to replace: */
+/* bg-green-500, bg-green-400, text-green-500, border-green-500 */
+
+/* NEW ORGANIC GREEN PALETTE */
+.bg-sage-50 { background-color: #f6f7f6; }
+.bg-sage-100 { background-color: #e8ebe8; }
+.bg-sage-200 { background-color: #d1d7d1; }
+.bg-sage-300 { background-color: #a8b5a8; }
+.bg-sage-400 { background-color: #7f8f7f; }
+.bg-sage-500 { background-color: #5a6b5a; }
+.bg-sage-600 { background-color: #4a5a4a; }
+.bg-sage-700 { background-color: #3d4a3d; }
+.bg-sage-800 { background-color: #2f3a2f; }
+.bg-sage-900 { background-color: #1f2a1f; }
+
+/* OLIVE GREEN PALETTE */
+.bg-olive-50 { background-color: #f7f8f6; }
+.bg-olive-100 { background-color: #ebeee8; }
+.bg-olive-200 { background-color: #d4dbd1; }
+.bg-olive-300 { background-color: #aab8a5; }
+.bg-olive-400 { background-color: #829579; }
+.bg-olive-500 { background-color: #6b7c62; }
+.bg-olive-600 { background-color: #5a6b52; }
+.bg-olive-700 { background-color: #4a5a43; }
+.bg-olive-800 { background-color: #3a4834; }
+.bg-olive-900 { background-color: #2a3625; }
+
+/* FOREST GREEN PALETTE */
+.bg-forest-50 { background-color: #f4f6f4; }
+.bg-forest-100 { background-color: #e6ebe6; }
+.bg-forest-200 { background-color: #ccd6cc; }
+.bg-forest-300 { background-color: #99b399; }
+.bg-forest-400 { background-color: #669066; }
+.bg-forest-500 { background-color: #4d6b4d; }
+.bg-forest-600 { background-color: #3d5a3d; }
+.bg-forest-700 { background-color: #334a33; }
+.bg-forest-800 { background-color: #293a29; }
+.bg-forest-900 { background-color: #1f2a1f; }
+
+/* EUCALYPTUS GREEN PALETTE (Premium organic feel) */
+.bg-eucalyptus-50 { background-color: #f5f7f5; }
+.bg-eucalyptus-100 { background-color: #e7ede7; }
+.bg-eucalyptus-200 { background-color: #cfdacf; }
+.bg-eucalyptus-300 { background-color: #a7baa7; }
+.bg-eucalyptus-400 { background-color: #7f9a7f; }
+.bg-eucalyptus-500 { background-color: #5f7a5f; }
+.bg-eucalyptus-600 { background-color: #4f6a4f; }
+.bg-eucalyptus-700 { background-color: #3f5a3f; }
+.bg-eucalyptus-800 { background-color: #2f4a2f; }
+.bg-eucalyptus-900 { background-color: #1f3a1f; }
+
+/* TEXT COLORS */
+.text-sage-500 { color: #5a6b5a; }
+.text-sage-600 { color: #4a5a4a; }
+.text-sage-700 { color: #3d4a3d; }
+
+.text-olive-500 { color: #6b7c62; }
+.text-olive-600 { color: #5a6b52; }
+.text-olive-700 { color: #4a5a43; }
+
+.text-forest-500 { color: #4d6b4d; }
+.text-forest-600 { color: #3d5a3d; }
+.text-forest-700 { color: #334a33; }
+
+.text-eucalyptus-500 { color: #5f7a5f; }
+.text-eucalyptus-600 { color: #4f6a4f; }
+.text-eucalyptus-700 { color: #3f5a3f; }
+
+/* BORDER COLORS */
+.border-sage-200 { border-color: #d1d7d1; }
+.border-sage-300 { border-color: #a8b5a8; }
+.border-sage-500 { border-color: #5a6b5a; }
+
+.border-olive-200 { border-color: #d4dbd1; }
+.border-olive-300 { border-color: #aab8a5; }
+.border-olive-500 { border-color: #6b7c62; }
+
+.border-forest-200 { border-color: #ccd6cc; }
+.border-forest-300 { border-color: #99b399; }
+.border-forest-500 { border-color: #4d6b4d; }
+
+.border-eucalyptus-200 { border-color: #cfdacf; }
+.border-eucalyptus-300 { border-color: #a7baa7; }
+.border-eucalyptus-500 { border-color: #5f7a5f; }
+
+/* GRADIENT COMBINATIONS WITH BRAND COLORS */
+.bg-gradient-sage-terracotta {
+  background: linear-gradient(135deg, #5a6b5a 0%, #d4784a 100%);
+}
+
+.bg-gradient-olive-cream {
+  background: linear-gradient(135deg, #6b7c62 0%, #f5f2ed 100%);
+}
+
+.bg-gradient-forest-brown {
+  background: linear-gradient(135deg, #4d6b4d 0%, #8b4513 100%);
+}
+
+.bg-gradient-eucalyptus-gold {
+  background: linear-gradient(135deg, #5f7a5f 0%, #d4af37 100%);
+}
+
+/* USAGE EXAMPLES FOR REPLACING NEON GREENS */
+
+/* Instead of: bg-green-500 */
+/* Use: bg-sage-500 or bg-eucalyptus-500 */
+
+/* Instead of: text-green-600 */
+/* Use: text-forest-600 or text-olive-600 */
+
+/* Instead of: border-green-400 */
+/* Use: border-sage-300 or border-eucalyptus-300 */
+
+/* SUCCESS STATES (for verified/authentic indicators) */
+.success-sage {
+  background-color: #5a6b5a;
+  color: white;
+}
+
+.success-eucalyptus {
+  background-color: #5f7a5f;
+  color: white;
+}
+
+/* HOVER STATES */
+.hover-sage:hover {
+  background-color: #4a5a4a;
+}
+
+.hover-eucalyptus:hover {
+  background-color: #4f6a4f;
+}
+
+/* FOCUS STATES */
+.focus-sage:focus {
+  border-color: #5a6b5a;
+  box-shadow: 0 0 0 3px rgba(90, 107, 90, 0.1);
+}
+
+.focus-eucalyptus:focus {
+  border-color: #5f7a5f;
+  box-shadow: 0 0 0 3px rgba(95, 122, 95, 0.1);
+}

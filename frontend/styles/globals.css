@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&family=Dancing+Script:wght@400;500;600;700&family=Kalam:wght@300;400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -47,5 +47,31 @@
 
   .input-field {
     @apply w-full px-4 py-3 bg-white border-2 border-earth-300/50 rounded-xl focus:outline-none focus:border-terracotta-500 transition-colors;
+  }
+
+  /* Font families for verification components */
+  .font-artistic {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .font-friendly {
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .font-modern {
+    font-family: 'Inter', sans-serif;
+  }
+
+  .font-handwritten {
+    font-family: 'Kalam', cursive;
+  }
+
+  /* Custom shadows for verification components */
+  .shadow-soft {
+    box-shadow: 0 4px 20px rgba(139, 69, 19, 0.1);
+  }
+
+  .shadow-warm {
+    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.2);
   }
 }

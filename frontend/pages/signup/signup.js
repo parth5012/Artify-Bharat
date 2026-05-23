@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { signup, googleOAuthLogin, facebookOAuthLogin } from '@/utils/auth'
 import { useRouter } from "next/router";
 import Script from 'next/script'
+import ArtifyLogo from '../../components/ArtifyLogo'
+import Footer from '../../components/Footer'
 
 export default function Signup() {
 
@@ -378,11 +380,12 @@ export default function Signup() {
             {/* Right Side - Signup Form */}
             <div className="w-full">
               <div className="bg-white rounded-3xl shadow-xl border-2 border-[#c2794d]/10 overflow-hidden">
-                {/* Form Header */}
+                {/* Form Header with Logo */}
                 <div className="p-8 lg:p-10 border-b-2 border-[#f5f0e8]">
                   <div className="text-center">
-                    <div className="inline-block p-3 bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5 rounded-2xl mb-4">
-                      <span className="text-4xl">✨</span>
+                    {/* Company Logo */}
+                    <div className="flex justify-center mb-6">
+                      <ArtifyLogo size="xl" showText={false} useImage={true} />
                     </div>
                     <h2 className="text-3xl font-bold text-[#3d3021] mb-2">
                       Create Your Account
@@ -860,6 +863,9 @@ export default function Signup() {
 
       {/* Footer Decoration */}
       <div className="h-2 bg-gradient-to-r from-[#8b6f47] via-[#c2794d] to-[#8b6f47]"></div>
+
+      {/* Footer */}
+      <Footer />
     </>
   );
 }

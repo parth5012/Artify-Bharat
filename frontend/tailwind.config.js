@@ -45,9 +45,19 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
+        // Aesthetic & Artistic Fonts
+        'handwritten': ['Kalam', 'cursive'],
+        'artistic': ['Caveat', 'cursive'],
+        'elegant': ['Dancing Script', 'cursive'],
+        'playful': ['Pacifico', 'cursive'],
+        'modern': ['Comfortaa', 'sans-serif'],
+        'friendly': ['Nunito', 'sans-serif'],
+
+        // Original fonts (keeping as fallbacks)
+        sans: ['Nunito', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Comfortaa', 'Poppins', 'Inter', 'system-ui', 'sans-serif'],
         hindi: ['Noto Sans Devanagari', 'Inter', 'system-ui', 'sans-serif'],
+        serif: ['Dancing Script', 'Playfair Display', 'Georgia', 'serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.8s ease-out',
@@ -55,6 +65,7 @@ module.exports = {
         'float': 'float 4s ease-in-out infinite',
         'shimmer': 'shimmer 2.5s linear infinite',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'spin-slow': 'spin 12s linear infinite',
       },
       keyframes: {
         fadeIn: {

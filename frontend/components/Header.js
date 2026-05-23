@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import ArtifyLogo from './ArtifyLogo'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -15,6 +16,7 @@ export default function Header() {
 
   const navigation = [
     { name: 'Marketplace', href: '/buyer/marketplace', icon: '🛍️' },
+    { name: 'Craft Stories', href: '/craft-stories', icon: '📖' },
     { name: 'Categories', href: '#categories', icon: '🎨' },
     { name: 'Digital Passport', href: '/product/demo', icon: '📜' },
     { name: 'How It Works', href: '#how', icon: '⚡' },
@@ -26,24 +28,23 @@ export default function Header() {
       <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#8b6f47] via-[#c2794d] to-[#8b6f47] z-50"></div>
 
       <header
-        className={`fixed top-1 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled
-            ? 'bg-[#f8f6f3]/98 backdrop-blur-md shadow-warm border-b-2 border-earth-300/40'
-            : 'bg-[#f8f6f3]/95 backdrop-blur-sm'
-        }`}
+        className={`fixed top-1 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
+          ? 'bg-[#f8f6f3]/98 backdrop-blur-md shadow-warm border-b-2 border-earth-300/40'
+          : 'bg-[#f8f6f3]/95 backdrop-blur-sm'
+          }`}
       >
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
-            {/* Logo */}
+            {/* Logo - Responsive Design */}
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="relative">
-                <div className="w-11 h-11 bg-gradient-to-br from-[#c2794d] to-[#8b6f47] rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105">
-                  <span className="text-white font-bold text-xl font-hindi">अ</span>
-                </div>
+              <div className="hidden md:block">
+                <ArtifyLogo size="lg" showText={true} useImage={true} className="group-hover:scale-105 transition-transform duration-300" />
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-[#3d3021] font-display">Artify Bharat</h1>
-                <p className="text-xs text-[#8b6f47] font-hindi hidden sm:block">कारीगरों का बाज़ार</p>
+              <div className="hidden sm:block md:hidden">
+                <ArtifyLogo size="md" showText={true} useImage={true} className="group-hover:scale-105 transition-transform duration-300" />
+              </div>
+              <div className="block sm:hidden">
+                <ArtifyLogo size="sm" showText={false} useImage={true} className="group-hover:scale-105 transition-transform duration-300" />
               </div>
             </Link>
 
@@ -53,7 +54,7 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="px-4 py-2 text-sm font-medium text-[#6d5a3d] hover:text-[#c2794d] rounded-lg hover:bg-earth-200/60 transition-all duration-200 flex items-center space-x-2 group relative"
+                  className="px-4 py-2 text-sm font-medium text-[#6d5a3d] hover:text-[#c2794d] rounded-lg hover:bg-earth-200/60 transition-all duration-200 flex items-center space-x-2 group relative font-modern"
                 >
                   <span className="text-base group-hover:scale-110 transition-transform">{item.icon}</span>
                   <span>{item.name}</span>
@@ -66,13 +67,13 @@ export default function Header() {
             <div className="hidden lg:flex items-center space-x-3">
               <Link
                 href="/login/login"
-                className="px-5 py-2.5 text-sm font-medium text-[#c2794d] hover:text-[#8b6f47] rounded-lg hover:bg-earth-200/60 transition-all duration-200 border border-earth-300/50 bg-white/80"
+                className="px-5 py-2.5 text-sm font-medium text-[#c2794d] hover:text-[#8b6f47] rounded-lg hover:bg-earth-200/60 transition-all duration-200 border border-earth-300/50 bg-white/80 font-modern"
               >
                 login
               </Link>
               <Link
                 href="/signup/signup"
-                className="px-6 py-2.5 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 flex items-center space-x-2"
+                className="px-6 py-2.5 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 flex items-center space-x-2 font-modern"
               >
                 <span></span>
                 <span>Signup</span>
@@ -94,16 +95,15 @@ export default function Header() {
 
           {/* Mobile Menu */}
           <div
-            className={`lg:hidden overflow-hidden transition-all duration-300 ${
-              isMenuOpen ? 'max-h-96 pb-6' : 'max-h-0'
-            }`}
+            className={`lg:hidden overflow-hidden transition-all duration-300 ${isMenuOpen ? 'max-h-96 pb-6' : 'max-h-0'
+              }`}
           >
             <div className="pt-4 space-y-2 bg-white/60 rounded-2xl p-4 mt-2 border border-earth-300/50">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="flex items-center space-x-3 px-4 py-3 text-[#6d5a3d] hover:text-[#c2794d] hover:bg-earth-200/60 rounded-lg transition-all duration-200"
+                  className="flex items-center space-x-3 px-4 py-3 text-[#6d5a3d] hover:text-[#c2794d] hover:bg-earth-200/60 rounded-lg transition-all duration-200 font-friendly"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <span className="text-xl">{item.icon}</span>
@@ -113,7 +113,7 @@ export default function Header() {
               <div className="pt-3 space-y-2 border-t border-earth-300/40">
                 <Link
                   href="/artisan/onboard"
-                  className="flex items-center justify-center space-x-2 px-6 py-3 text-[#c2794d] font-medium rounded-lg border border-earth-300/50 bg-white/80 hover:bg-earth-200/60 transition-all"
+                  className="flex items-center justify-center space-x-2 px-6 py-3 text-[#c2794d] font-medium rounded-lg border border-earth-300/50 bg-white/80 hover:bg-earth-200/60 transition-all font-modern"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <span>🎯</span>
@@ -121,7 +121,7 @@ export default function Header() {
                 </Link>
                 <Link
                   href="/admin/review-queue"
-                  className="flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-lg shadow-warm"
+                  className="flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-lg shadow-warm font-modern"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <span>👑</span>
