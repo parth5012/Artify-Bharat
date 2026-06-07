@@ -10,6 +10,7 @@ router.register("categories", views.CategoryViewSet)
 router.register("carts", views.CartViewSet)
 router.register("customers", views.CustomerViewSet)
 router.register("orders", views.OrderViewSet, basename="orders")
+router.register("verification", views.ArtisanVerificationViewSet, basename="verification")
 
 products_router = routers.NestedDefaultRouter(router, "products", lookup="product")
 # products_router.register('reviews', views.ReviewViewSet,
@@ -31,6 +32,6 @@ urlpatterns = (
         path("signup/", views.SignupView.as_view()),
         path('artisan/craft-story/', views.update_craft_story),
         path('artisan/profile/', views.get_artisan_profile),
-
+        path('artisan/verification-status/', views.get_verification_status),
     ]
 )

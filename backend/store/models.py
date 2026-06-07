@@ -123,6 +123,90 @@ class Artisan(models.Model):
     # orders
 
 
+class ArtisanVerification(models.Model):
+    VERIFICATION_STATUS_CHOICES = [
+        ('PENDING', 'Pending Review'),
+        ('VERIFIED', 'Verified'),
+        ('REJECTED', 'Rejected'),
+        ('NEEDS_INFO', 'Needs Additional Information'),
+    ]
+    
+    GENERATIONAL_LINEAGE_CHOICES = [
+        ('first', '1st Generation'),
+        ('second', '2nd Generation'),
+        ('third_plus', '3rd Generation+'),
+        ('community', 'Community/SHG Trained'),
+    ]
+    
+    TOOLING_METHOD_CHOICES = [
+        ('handcrafted', '100% Handcrafted'),
+        ('handloom', 'Handloom Operated'),
+        ('hand_tooled', 'Hand-tooled with Assistive Machinery'),
+    ]
+    
+    # Core relationship
+    artisan = models.OneToOneField(Artisan, on_delete=models.CASCADE, related_name='verification')
+    
+    # Step 1: Artisan Pedigree & Identity
+    pechan_card_file = models.ImageField(
+        upload_to="verification/pechan_cards",
+        validators=[validate_file_size],
+        help_text="Pechan Card or State Handicraft Board Certificate"
+    )
+    pechan_card_number = models.CharField(max_length=100)
+    generational_lineage = models.CharField(
+        max_length=20, 
+        choices=GENERATIONAL_LINEAGE_CHOICES
+    )
+    artisan_bio = models.TextField(
+        help_text="Product creation journey and craft authenticity details"
+    )
+    
+    # Step 2: Craft Authenticity & Material Proof
+    has_gi_tag = models.BooleanField(default=False)
+    gi_tag_number = models.CharField(
+        max_length=50, 
+        null=True, 
+        blank=True,
+        help_text="GI Tag registration number if applicable"
+    )
+    raw_material_source = models.TextField(
+        help_text="Description of authentic materials used in products"
+    )
+    tooling_method = models.CharField(
+        max_length=20,
+        choices=TOOLING_METHOD_CHOICES
+    )
+    
+    # Step 3: Visual/Video Proof
+    process_video_file = models.FileField(
+        upload_to="verification/process_videos",
+        validators=[validate_file_size],
+        help_text="30-60 second video showing authentic product creation process"
+    )
+    workshop_photo_file = models.ImageField(
+        upload_to="verification/workshop_photos",
+        validators=[validate_file_size],
+        help_text="Photo of workshop/studio space"
+    )
+    
+    # Verification status and metadata
+    verification_status = models.CharField(
+        max_length=20,
+        choices=VERIFICATION_STATUS_CHOICES,
+        default='PENDING'
+    )
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewer_notes = models.TextField(null=True, blank=True)
+    
+    def __str__(self):
+        return f"Verification for {self.artisan.user.get_full_name()} - {self.verification_status}"
+    
+    class Meta:
+        ordering = ['-submitted_at']
+
+
 class Customer(models.Model):
     MEMBERSHIP_BRONZE = "B"
     MEMBERSHIP_SILVER = "S"

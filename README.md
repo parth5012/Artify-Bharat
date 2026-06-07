@@ -1,8 +1,18 @@
-# Artify Bharat - AI-Powered Verified Handmade Marketplace
+# 🪔 Artify Bharat - AI-Powered Verified Handmade Marketplace
 
-A Next.js application that empowers Indian artisans through AI-driven voice onboarding, multilingual storytelling, and authenticity verification.
+**Empowering India's artisan community through voice onboarding, AI-driven authenticity verification, multilingual storytelling, and a fair digital marketplace.**
 
-## Features
+<div align="center">
+
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)
+![Django](https://img.shields.io/badge/Django-6.0-darkgreen?logo=django&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.128-teal?logo=fastapi&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/Google%20Gemini-AI-blue?logo=google&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
+</div>
+
+## ✨ Features
 
 - 🎯 **Voice Onboarding**: Native language voice recording for artisans
 - 🤖 **AI Authenticity Verification**: 94% accuracy in detecting handmade products
@@ -13,10 +23,10 @@ A Next.js application that empowers Indian artisans through AI-driven voice onbo
 - 🛍️ **Marketplace**: Browse and purchase authentic handmade products
 - 🔐 **OAuth Authentication**: Login with Google and Facebook
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 ### Frontend
-- **Framework**: Next.js 14
+- **Framework**: Next.js 16
 - **Styling**: Tailwind CSS
 - **Language**: JavaScript
 - **Fonts**: Inter, Poppins, Noto Sans Devanagari
@@ -27,25 +37,191 @@ A Next.js application that empowers Indian artisans through AI-driven voice onbo
 - **Authentication**: JWT + OAuth (Google, Facebook)
 - **Database**: SQLite (development) / PostgreSQL (production)
 
-## Getting Started
+### AI Microservices
+- **Framework**: FastAPI
+- **AI Models**: Google Gemini Pro
+- **Features**: Voice transcription, story generation, authenticity verification
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+
+- Python 3.11+
+- uv (Python package manager)
+
+### 1. Clone Repository
+```bash
+git clone <repository-url>
+cd artify-bharat
+```
+
+### 2. Start All Services
+```bash
+# Terminal 1: Frontend (Next.js)
+cd frontend
+npm install
+npm run dev
+# Runs on http://localhost:3000
+
+# Terminal 2: Backend (Django)
+cd backend
+python manage.py runserver 8002
+# Runs on http://localhost:8002
+
+# Terminal 3: AI Microservices (FastAPI) - Optional
+cd microservices
+fastapi dev main.py
+# Runs on http://localhost:8001
+```
+
+### 3. Database Setup
+```bash
+cd backend
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py loaddata fixtures/initial_data.json  # Sample data
+```
+
+## 📁 Project Structure
+
+```
+artify-bharat/
+├── frontend/                 # Next.js Frontend
+│   ├── components/          # Reusable UI components
+│   ├── pages/              # Next.js pages
+│   ├── utils/              # API calls and utilities
+│   ├── data/               # Mock data and constants
+│   └── styles/             # Global styles
+├── backend/                 # Django Backend
+│   ├── core/               # User authentication
+│   ├── store/              # Marketplace logic
+│   └── marketplace/        # Django settings
+├── microservices/          # FastAPI AI Services
+│   └── utils/              # AI utilities
+└── README.md
+```
+
+## 🔧 Configuration
+
+### Environment Variables
+
+**Frontend (.env.local):**
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8002
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
+NEXT_PUBLIC_FACEBOOK_APP_ID=your_facebook_app_id
+```
+
+**Backend (.env):**
+```env
+SECRET_KEY=your_django_secret_key
+DEBUG=True
+GOOGLE_OAUTH2_CLIENT_ID=your_google_client_id
+GOOGLE_OAUTH2_CLIENT_SECRET=your_google_client_secret
+FACEBOOK_APP_ID=your_facebook_app_id
+FACEBOOK_APP_SECRET=your_facebook_app_secret
+```
+
+**Microservices (.env):**
+```env
+GOOGLE_API_KEY=your_gemini_api_key
+```
+
+## 🎨 Key Components
+
+### Frontend Components
+- **ArtifyLogo**: Brand logo with multiple variants
+- **IndianCraftStories**: Interactive state-wise craft stories
+- **ArtisanSpotlight**: Featured artisan showcase
+- **Footer**: Comprehensive site footer
+- **ArtisanVerificationWizard**: Multi-step verification process
+
+### Backend Models
+- **User**: Custom user model with OAuth support
+- **Artisan**: Artisan profiles and verification
+- **Product**: Marketplace products
+- **Category**: Product categorization
+- **ArtisanVerification**: Heritage verification system
+
+## 🔐 Authentication
+
+The platform supports multiple authentication methods:
+- **Email/Password**: Traditional authentication
+- **Google OAuth**: Social login with Google
+- **Facebook OAuth**: Social login with Facebook
+- **JWT Tokens**: Secure API authentication
+
+## 🤖 AI Features
+
+### Voice Onboarding
+- Native language voice recording
+- Automatic transcription using Google Speech-to-Text
+- Multi-language support
+
+### Authenticity Verification
+- Image analysis for handmade detection
+- Pattern recognition for traditional crafts
+- 94% accuracy rate
+
+### Story Generation
+- AI-powered craft story creation
+- Multi-language content generation
+- Cultural context preservation
+
+## 📱 Pages
+
+### Public Pages
+- **Homepage** (`/`): Landing page with featured content
+- **Marketplace** (`/buyer/marketplace`): Product browsing
+- **Our Story** (`/our-story`): Company information
+- **Craft Stories** (`/craft-stories`): State-wise craft heritage
+
+### Artisan Pages
+- **Dashboard** (`/artisan/dashboard`): Artisan control panel
+- **Onboarding** (`/artisan/onboard`): New artisan registration
+- **Verification** (`/artisan/verify`): Heritage verification process
+
+### Authentication
+- **Login** (`/login/login`): User authentication
+- **Signup** (`/signup/signup`): New user registration
+
+## 🚀 Deployment
+
+### Production Setup
+1. Set environment variables for production
+2. Configure PostgreSQL database
+3. Set up static file serving
+4. Configure domain and SSL
+5. Deploy using Docker or cloud platforms
+
+### Docker Support
+```bash
+# Build and run with Docker
+docker-compose up --build
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Indian artisan community for inspiration
+- Google Gemini AI for AI capabilities
+- Open source community for tools and libraries
+
+---
+
 <div align="center">
-
-<h1>🪔 Artify Bharat</h1>
-
-<p><strong>AI-Powered Verified Handmade Marketplace for Indian Artisans</strong></p>
-
-<p>
-  Empowering India's artisan community through voice onboarding, AI-driven authenticity verification, multilingual storytelling, and a fair digital marketplace — all in one platform.
-</p>
-
-<p>
-  <img src="https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white" alt="Next.js" />
-  <img src="https://img.shields.io/badge/Django-6.0-darkgreen?logo=django&logoColor=white" alt="Django" />
-  <img src="https://img.shields.io/badge/FastAPI-0.128-teal?logo=fastapi&logoColor=white" alt="FastAPI" />
-  <img src="https://img.shields.io/badge/Google%20Gemini-AI-blue?logo=google&logoColor=white" alt="Gemini AI" />
-  <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License" />
-</p>
-
+<strong>Made with ❤️ for Indian artisans</strong>
 </div>
 
 ---

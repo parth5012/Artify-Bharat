@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { login, googleOAuthLogin, facebookOAuthLogin } from '@/utils/auth'
 import Script from 'next/script'
+import ArtifyLogo from '../../components/ArtifyLogo'
+import Footer from '../../components/Footer'
 
 export default function Login() {
   const router = useRouter();
@@ -138,22 +140,22 @@ export default function Login() {
       <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#8b6f47] via-[#c2794d] to-[#8b6f47] z-50"></div>
 
 
-      <header className="fixed top-1 left-0 right-0 z-50 bg-[#f8f6f3]/98 backdrop-blur-md border-b-2 border-[#c2794d]/20">
+      <header className="fixed top-1 left-0 right-0 z-50 bg-[#f8f6f3]/98 backdrop-blur-md border-b-2 border-[#8b4513]/20">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
-            <Link href="/" className="flex items-center space-x-3 group">
-              <div className="w-11 h-11 bg-gradient-to-br from-[#c2794d] to-[#8b6f47] rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105">
-                <span className="text-white font-bold text-xl">अ</span>
-              </div>
+            <div className="flex items-center space-x-3">
+              <Link href="/" className="flex items-center space-x-3 group">
+                <ArtifyLogo size="lg" showText={true} useImage={true} className="group-hover:scale-105 transition-transform duration-300" />
+              </Link>
               <div>
-                <h1 className="text-2xl font-bold text-[#3d3021]">
+                <h1 className="text-xl font-bold text-[#3d3021] font-artistic">
                   Artify Bharat
                 </h1>
-                <p className="text-xs text-[#8b6f47] hidden sm:block">
+                <p className="text-xs text-[#8b6f47] hidden sm:block font-handwritten">
                   कारीगरों का बाज़ार
                 </p>
               </div>
-            </Link>
+            </div>
 
             <Link
               href="/"
@@ -162,9 +164,9 @@ export default function Login() {
               <span>←</span>
               <span>Back to Home</span>
             </Link>
-          </div>
-        </nav>
-      </header>
+          </div >
+        </nav >
+      </header >
 
       {/* Main Content */}
       <div className="min-h-screen bg-gradient-to-br from-[#f8f6f3] via-[#faf8f5] to-[#f5f0e8] pt-24 pb-12 px-4 flex items-center justify-center">
@@ -186,7 +188,7 @@ export default function Login() {
                     </div>
 
 
-                    <h2 className="text-4xl font-bold leading-tight">
+                    <h2 className="text-4xl font-bold leading-tight font-elegant">
                       Continue Your
                       <br />
                       Creative Journey
@@ -264,17 +266,18 @@ export default function Login() {
             <div className="w-full max-w-md mx-auto lg:mx-0">
               <div className="bg-white rounded-3xl shadow-xl border-2 border-[#c2794d]/10 overflow-hidden">
 
-                {/* Form Header */}
+                {/* Form Header with Logo */}
                 <div className="p-8 lg:p-10 border-b-2 border-[#f5f0e8]">
                   <div className="text-center">
-                    <div className="inline-block p-3 bg-gradient-to-br from-[#c2794d]/10 to-[#8b6f47]/5 rounded-2xl mb-4">
-                      <span className="text-4xl">🔑</span>
+                    {/* Company Logo */}
+                    <div className="flex justify-center mb-6">
+                      <ArtifyLogo size="xl" showText={false} useImage={true} />
                     </div>
-                    <h2 className="text-3xl font-bold text-[#3d3021] mb-2">
+                    <h2 className="text-3xl font-bold text-[#3d3021] mb-2 font-elegant">
                       Welcome Back!
                     </h2>
                     <p className="text-[#6d5a3d]/70">
-                      Login to continue your journey
+                      Login to continue your journey with Artify Bharat
                     </p>
                   </div>
                 </div>
@@ -284,7 +287,7 @@ export default function Login() {
                   <form onSubmit={handleSubmit} className="space-y-6">
 
                     <div>
-                      <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                      <label className="block text-sm font-medium text-[#3d3021] mb-2 font-modern">
                         Email Address
                       </label>
                       <input
@@ -299,7 +302,7 @@ export default function Login() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#3d3021] mb-2">
+                      <label className="block text-sm font-medium text-[#3d3021] mb-2 font-modern">
                         Password
                       </label>
                       <input
@@ -326,7 +329,7 @@ export default function Login() {
                       </label>
                       <Link
                         href="/forgot-password"
-                        className="text-[#c2794d] hover:text-[#8b6f47] font-medium"
+                        className="text-[#c2794d] hover:text-[#8b6f47] font-medium font-friendly"
                       >
                         Forgot password?
                       </Link>
@@ -334,7 +337,7 @@ export default function Login() {
 
                     <button
                       type="submit"
-                      className="w-full py-4 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+                      className="w-full py-4 bg-gradient-to-r from-[#c2794d] to-[#8b6f47] text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-[1.02] font-modern"
                     >
                       Login to Dashboard
                     </button>
@@ -363,7 +366,7 @@ export default function Login() {
                         <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
                           <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                         </svg>
-                        <span className="text-sm font-medium text-[#6d5a3d]">
+                        <span className="text-sm font-medium text-[#6d5a3d] font-friendly">
                           Facebook
                         </span>
                       </button>
@@ -378,7 +381,7 @@ export default function Login() {
                       Don't have an account?{" "}
                       <Link
                         href="/signup/signup"
-                        className="text-[#c2794d] hover:text-[#8b6f47] font-semibold"
+                        className="text-[#c2794d] hover:text-[#8b6f47] font-semibold font-modern"
                       >
                         Sign up now
                       </Link>
@@ -389,10 +392,13 @@ export default function Login() {
             </div>
           </div>
         </div>
-      </div>
+      </div >
 
       {/* Footer Decoration */}
       <div className="h-2 bg-gradient-to-r from-[#8b6f47] via-[#c2794d] to-[#8b6f47]"></div>
+
+      {/* Footer */}
+      <Footer />
     </>
   );
 }

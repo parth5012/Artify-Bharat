@@ -1,4 +1,5 @@
 import AppLayout from "../../components/AppLayout";
+import ArtifyLogo from "../../components/ArtifyLogo";
 import { useState, useRef } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -418,8 +419,11 @@ export default function ArtisanOnboarding() {
     <AppLayout currentPage="onboarding">
       <div className="min-h-screen p-4 md:p-8">
         <div className="max-w-6xl mx-auto">
-          {/* Page Title */}
+          {/* Page Title with Logo */}
           <div className="mb-8">
+            <div className="flex items-center gap-4 mb-6">
+              <ArtifyLogo size="lg" showText={true} useImage={true} />
+            </div>
             <h2 className="text-3xl font-bold text-[#3d3021] mb-2 font-display">
               {t.title}
             </h2>

@@ -4,6 +4,7 @@ from rest_framework import serializers
 from .signals import order_created
 from .models import (
     Artisan,
+    ArtisanVerification,
     Cart,
     CartItem,
     Customer,
@@ -332,6 +333,93 @@ class CreateUserSerializer(serializers.Serializer):
     city = serializers.CharField()
     state = serializers.CharField()
     pincode = serializers.CharField()
+
+
+class ArtisanVerificationSerializer(serializers.ModelSerializer):
+    pechan_card_file_url = serializers.SerializerMethodField()
+    process_video_file_url = serializers.SerializerMethodField()
+    workshop_photo_file_url = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = ArtisanVerification
+        fields = [
+            'id',
+            'artisan',
+            'pechan_card_file',
+            'pechan_card_file_url',
+            'pechan_card_number',
+            'generational_lineage',
+            'artisan_bio',
+            'has_gi_tag',
+            'gi_tag_number',
+            'raw_material_source',
+            'tooling_method',
+            'process_video_file',
+            'process_video_file_url',
+            'workshop_photo_file',
+            'workshop_photo_file_url',
+            'verification_status',
+            'submitted_at',
+            'reviewed_at',
+            'reviewer_notes',
+        ]
+        read_only_fields = ['id', 'submitted_at', 'reviewed_at', 'reviewer_notes']
+    
+    def get_pechan_card_file_url(self, verification):
+        if verification.pechan_card_file:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(verification.pechan_card_file.url)
+            return verification.pechan_card_file.url
+        return None
+    
+    def get_process_video_file_url(self, verification):
+        if verification.process_video_file:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(verification.process_video_file.url)
+            return verification.process_video_file.url
+        return None
+    
+    def get_workshop_photo_file_url(self, verification):
+        if verification.workshop_photo_file:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(verification.workshop_photo_file.url)
+            return verification.workshop_photo_file.url
+        return None
+
+
+class CreateArtisanVerificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ArtisanVerification
+        fields = [
+            'pechan_card_file',
+            'pechan_card_number',
+            'generational_lineage',
+            'artisan_bio',
+            'has_gi_tag',
+            'gi_tag_number',
+            'raw_material_source',
+            'tooling_method',
+            'process_video_file',
+            'workshop_photo_file',
+        ]
+    
+    def validate(self, data):
+        # Validate GI Tag number if has_gi_tag is True
+        if data.get('has_gi_tag') and not data.get('gi_tag_number'):
+            raise serializers.ValidationError({
+                'gi_tag_number': 'GI Tag number is required when GI Tag status is enabled.'
+            })
+        
+        # Validate artisan bio length
+        if len(data.get('artisan_bio', '')) < 50:
+            raise serializers.ValidationError({
+                'artisan_bio': 'Product creation details must be at least 50 characters long.'
+            })
+        
+        return data
 
 
 #  Sample Data
