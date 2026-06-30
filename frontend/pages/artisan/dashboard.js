@@ -736,7 +736,7 @@ function DashboardContent() {
           }}
         />
       )}
-    </div>
+    // </div>
   );
 }
 showEditProfile && (
