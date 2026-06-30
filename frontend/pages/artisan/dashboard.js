@@ -736,31 +736,32 @@ function DashboardContent() {
           }}
         />
       )}
-    // </div>
+    </div>
   );
 }
-showEditProfile && (
-  <EditProfileModal
-    artisanData={artisanData}
-    onClose={() => setShowEditProfile(false)}
-    onUpdate={async () => {
-      // Refresh profile data
-      const profile = await getArtisanProfile();
-      setArtisanData({
-        title: `${profile.user?.first_name || ''} ${profile.user?.last_name || ''}`.trim() || "Artisan",
-        profileImage: profile.profile_image_url || null,
-        city: profile.user?.address?.city || "City",
-        state: profile.user?.address?.state || "State",
-        craftStory: profile.craft_story || "No story recorded yet.",
-        speciality: profile.speciality || "Artisan",
-        experience: profile.experience || 0,
-      });
-    }}
-  />
-)}
-    </div >
-  );
-}
+
+// {showEditProfile && (
+//   <EditProfileModal
+//     artisanData={artisanData}
+//     onClose={() => setShowEditProfile(false)}
+//     onUpdate={async () => {
+//       // Refresh profile data
+//       const profile = await getArtisanProfile();
+//       setArtisanData({
+//         title: `${profile.user?.first_name || ''} ${profile.user?.last_name || ''}`.trim() || "Artisan",
+//         profileImage: profile.profile_image_url || null,
+//         city: profile.user?.address?.city || "City",
+//         state: profile.user?.address?.state || "State",
+//         craftStory: profile.craft_story || "No story recorded yet.",
+//         speciality: profile.speciality || "Artisan",
+//         experience: profile.experience || 0,
+//       });
+//     }}
+//   />
+// )}
+//     // </div >
+//   );
+// };
 
 /* ================= ENHANCED COMPONENTS ================= */
 
