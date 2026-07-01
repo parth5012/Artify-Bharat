@@ -1,13 +1,18 @@
-from tkinter.font import names
-from django.db.models.functions import Lower
+from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.db.models.aggregates import Count
-from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.db.models.functions import Lower
 from django.db.transaction import atomic
 
 # from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.decorators import action
-from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework import status
+from rest_framework.decorators import action, api_view
+from rest_framework.exceptions import (
+    NotAuthenticated,
+    PermissionDenied,
+    ValidationError,
+)
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.mixins import (
     CreateModelMixin,
     DestroyModelMixin,
@@ -21,27 +26,13 @@ from rest_framework.permissions import (
     IsAdminUser,
     IsAuthenticated,
 )
-from rest_framework.exceptions import (
-    ValidationError,
-    PermissionDenied,
-    NotAuthenticated,
-)
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
-from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 
 # from streamlit import user
 from .filters import ProductFilter
-from .permissions import (
-    # FullDjangoModelPermissions,
-    IsAdminOrReadOnly,
-    IsArtisanOrReadOnly,
-    ViewCustomerHistoryPermission,
-)
-from .pagination import DefaultPagination
 from .models import (
     Address,
     Artisan,
@@ -56,6 +47,13 @@ from .models import (
     Product,
     ProductAsset,
     # Review,
+)
+from .pagination import DefaultPagination
+from .permissions import (
+    # FullDjangoModelPermissions,
+    IsAdminOrReadOnly,
+    IsArtisanOrReadOnly,
+    ViewCustomerHistoryPermission,
 )
 from .serializers import (
     AddCartItemSerializer,
@@ -513,18 +511,18 @@ def get_artisan_profile(request):
 class ArtisanVerificationViewSet(ModelViewSet):
     serializer_class = ArtisanVerificationSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def get_queryset(self):
         # Only return verification for the current user's artisan profile
-        if hasattr(self.request.user, 'artisan'):
+        if hasattr(self.request.user, "artisan"):
             return ArtisanVerification.objects.filter(artisan=self.request.user.artisan)
         return ArtisanVerification.objects.none()
-    
+
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action == "create":
             return CreateArtisanVerificationSerializer
         return ArtisanVerificationSerializer
-    
+
     def create(self, request, *args, **kwargs):
         try:
             artisan = request.user.artisan
@@ -533,69 +531,74 @@ class ArtisanVerificationViewSet(ModelViewSet):
                 {"error": "User is not registered as an artisan."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         # Check if verification already exists
         if ArtisanVerification.objects.filter(artisan=artisan).exists():
             return Response(
                 {"error": "Verification already submitted for this artisan."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
+
         # Save with artisan relationship
         verification = serializer.save(artisan=artisan)
-        
+
         # Return response using full serializer
         response_serializer = ArtisanVerificationSerializer(
-            verification, 
-            context={'request': request}
+            verification, context={"request": request}
         )
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
-    
-    @action(detail=False, methods=['GET'])
+
+    @action(detail=False, methods=["GET"])
     def status(self, request):
         """Get verification status for current artisan"""
         try:
             artisan = request.user.artisan
             verification = ArtisanVerification.objects.get(artisan=artisan)
-            return Response({
-                'has_verification': True,
-                'status': verification.verification_status,
-                'submitted_at': verification.submitted_at,
-                'reviewed_at': verification.reviewed_at,
-            })
+            return Response(
+                {
+                    "has_verification": True,
+                    "status": verification.verification_status,
+                    "submitted_at": verification.submitted_at,
+                    "reviewed_at": verification.reviewed_at,
+                }
+            )
         except Artisan.DoesNotExist:
             return Response(
-                {"error": "User is not an artisan"}, 
-                status=status.HTTP_400_BAD_REQUEST
+                {"error": "User is not an artisan"}, status=status.HTTP_400_BAD_REQUEST
             )
         except ArtisanVerification.DoesNotExist:
-            return Response({
-                'has_verification': False,
-                'status': None,
-            })
+            return Response(
+                {
+                    "has_verification": False,
+                    "status": None,
+                }
+            )
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def get_verification_status(request):
     """Simple endpoint to check if user has submitted verification"""
     try:
         artisan = request.user.artisan
         verification = ArtisanVerification.objects.get(artisan=artisan)
-        return Response({
-            'has_verification': True,
-            'status': verification.verification_status,
-            'submitted_at': verification.submitted_at,
-        })
+        return Response(
+            {
+                "has_verification": True,
+                "status": verification.verification_status,
+                "submitted_at": verification.submitted_at,
+            }
+        )
     except Artisan.DoesNotExist:
         return Response(
-            {"error": "User is not an artisan"}, 
-            status=status.HTTP_400_BAD_REQUEST
+            {"error": "User is not an artisan"}, status=status.HTTP_400_BAD_REQUEST
         )
     except ArtisanVerification.DoesNotExist:
-        return Response({
-            'has_verification': False,
-            'status': None,
-        })
+        return Response(
+            {
+                "has_verification": False,
+                "status": None,
+            }
+        )

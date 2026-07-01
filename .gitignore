@@ -19,6 +19,10 @@ Thumbs.db
 
 # Python cache files
 __pycache__/
+*/__pycache__/
+*/.python-version
+.pytest_cache/
+*/.pytest_cache/
 *.pyc
 
 # Local Development Database

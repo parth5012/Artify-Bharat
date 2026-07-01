@@ -49,7 +49,7 @@ class ArtisanSerializer(serializers.ModelSerializer):
         }
 
         # Add address if exists
-        try:
+        if user.address:
             address = user.address
             user_data["address"] = {
                 "city": address.city,
@@ -57,7 +57,7 @@ class ArtisanSerializer(serializers.ModelSerializer):
                 "local_address": address.local_address,
                 "pincode": address.pincode,
             }
-        except:
+        else:
             user_data["address"] = None
 
         return user_data

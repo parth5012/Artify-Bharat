@@ -10,6 +10,7 @@ def create_index():
     if not os.path.exists("index"):
         os.mkdir("index")
     idx = create_in("index", schema)
+    print('index created!')
     return idx
 
 
@@ -34,11 +35,12 @@ def index_product_names(token):
         writer = index.writer()
         writer.add_document(product=product)
         writer.commit()
-        return data
+    print('Added Products to Search Index')
+    return data
     
 
-    def search_product(query):
-        index = get_index()
-        with index.searcher() as searcher:
-            results = searcher.find("product", query)
-            return [result['product'] for result in results]
+def search_product(query):
+    index = get_index()
+    with index.searcher() as searcher:
+        results = searcher.find("product", query)
+        return [result['product'] for result in results]
